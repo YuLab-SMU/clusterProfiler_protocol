@@ -7,20 +7,12 @@ metabolism <-read.csv("metabolism_expr.csv",row.names = 1,header = 1)
 colnames(metabolism) <- sub("\\.","|",colnames(metabolism))
 
 
-#The expression of the three groups was obtained
-result <- vector("list", 3)
-names(result) <- c("CD", "UC", "Control")
-for (need in names(result)) {
-  filtered <- meta[meta$Diagnosis == need, ]
-  need_sample <- intersect(filtered$sample, colnames(metabolism))
-  metabolism_select <- metabolism[ ,need_sample]
-  result[[need]] <-  t(metabolism_select)
-  
-}
+#get the expression of the three groups("CD","UC","Control") 
 
-cd_metabolism <- result$CD
-uc_metabolism <- result$UC
-hc_metabolism <- result$Control
+list <- split(meta$sample, meta$Diagnosis)
+cd_metabolism <- t(metabolism[, list$CD])
+uc_metabolism <- t(metabolism[, list$UC])
+hc_metabolism <- t(metabolism[, list$Control])
 
 #differential analysis
 differential_analysis <- function(case, control) {
@@ -59,6 +51,4 @@ uc_gene_list <- uc_up$name
 
 #The results were saved for visualization
 genelist <- list(cd = cd_gene_list, uc = uc_gene_list)
-
-
 saveRDS(genelist,"IBD.1.high.mb.rds")

@@ -1,54 +1,43 @@
+library(MicrobiotaProcess)
 #clinical info
 meta <- read.csv("metabolism_meta.csv",header = T,row.names = 1)
 
-# read metagenome data
+# read metabolism  data
 metabolism <-read.csv("metabolism_expr.csv",row.names = 1,header = 1)
 
 colnames(metabolism) <- sub("\\.","|",colnames(metabolism))
 
+mpse <- MPSE(metabolism )
+mpse <- mpse %>% dplyr::left_join(meta, by = c('Sample' = 'sample'))
 
-#get the expression of the three groups("CD","UC","Control") 
+mpse.cd <- mpse %>% dplyr::filter(Diagnosis %in% c('Control', 'CD'))
+mpse.uc <- mpse %>% dplyr::filter(Diagnosis %in% c('Control', 'UC'))
 
-list <- split(meta$sample, meta$Diagnosis)
-cd_metabolism <- t(metabolism[, list$CD])
-uc_metabolism <- t(metabolism[, list$UC])
-hc_metabolism <- t(metabolism[, list$Control])
+mpse.cd <- mpse.cd %>% 
+  mp_diff_analysis(
+    .abundance = Abundance, 
+    .group = Diagnosis,
+    force = TRUE,
+    relative = FALSE
+  )
 
-#differential analysis
-differential_analysis <- function(case, control) {
-  pvalue <- rep(0, ncol(control))
-  log2FC <- rep(0, ncol(control))
-  for (i in 1:ncol(control)) {
-    case_expr <- na.omit(case[, i])
-    ctrl_expr <- na.omit(control[, i])
-    res <- wilcox.test(case_expr, ctrl_expr)
-    pvalue[i] <- res$p.value
-    log2FC[i] <- log2(mean(case_expr) / mean(ctrl_expr))
-  }
-  results <- data.frame(name = colnames(case),pvalue = pvalue,log2FC = log2FC)
-  return(results)
-  
-}
+mpse.uc <- mpse.uc %>%
+  mp_diff_analysis(
+    .abundance = Abundance,
+    .group = Diagnosis,
+    force = TRUE,
+    relative = FALSE
+  )
 
-#UC vs Control
-results <- differential_analysis(case = uc_metabolism, control = hc_metabolism)
-condition <- results$pvalue < 0.05 & abs(results$log2FC) > 1
-difference_metabolism_uc <- results[condition, ]
+genelist <- list(cd = mpse.cd %>% 
+                   mp_extract_feature() %>% 
+                   dplyr::filter(Sign_Diagnosis == 'CD') %>%
+                   dplyr::pull(OTU),
+                 
+                 uc = mpse.uc %>%
+                   mp_extract_feature() %>%
+                   dplyr::filter(Sign_Diagnosis == 'UC') %>%
+                   dplyr::pull(OTU)
+)
 
-
-#CD vs Control
-results <- differential_analysis(case = cd_metabolism, control = hc_metabolism)
-condition <- results$pvalue < 0.05 & abs(results$log2FC) > 1
-difference_metabolism_cd <- results[condition, ]
-
-#Up-regulated genes in CD
-cd_up <- subset(difference_metabolism_cd, log2FC > 1, select = name)
-#Up-regulated genes in UC
-uc_up <- subset(difference_metabolism_uc, log2FC > 1, select = name)
-
-cd_gene_list <- cd_up$name
-uc_gene_list <- uc_up$name
-
-#The results were saved for visualization
-genelist <- list(cd = cd_gene_list, uc = uc_gene_list)
-saveRDS(genelist,"IBD.1.high.mb.rds")
+saveRDS(genelist, "IBD.cpd.mpse.rds")

@@ -1,18 +1,18 @@
 # import helper function
-source("./Phyllostachys_heterocycla_helper_function.R")
+source("./Phyllostachys_heterocycla_example/script/Phyllostachys_heterocycla_helper_function.R")
 set.seed(1234)
 # prepare db
 plant_tf_db <- read.table(
-    "./Phyllostachys_heterocycla_annot_data/regulation_from_motif_CE_Phe.txt",
+    "./Phyllostachys_heterocycla_example/input_data/annot_data/regulation_from_motif_CE_Phe.txt",
     sep = "\t", header = FALSE)
 tf_id_annotation <- read.table(
-    "./Phyllostachys_heterocycla_annot_data/Phe_TF_list.txt",
+    "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_TF_list.txt",
     header = TRUE, sep = "\t")
 plant_tf_db <- plant_tf_db[, c(1, 3)]
 colnames(plant_tf_db) <- c("TERM", "GENE")
 
 # prepare counts
-mat <- counts_prepare("./Phyllostachys_heterocycla_counts")
+mat <- counts_prepare("./Phyllostachys_heterocycla_example/input_data/counts")
 
 # data analysis
 seven_day_result <- DESeq_analysis(mat,
@@ -44,7 +44,7 @@ enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE, showCategory = 
 
 # transcription factor function annotate
 go_db <- read.table(
-    file = "./Phyllostachys_heterocycla_annot_data/Phe_GO_annotation.txt",
+    file = "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_GO_annotation.txt",
     header = TRUE, sep = "\t", quote = "")
 tf_id <- unique(enrich_plot$data$ID)
 enrich_pathway_plot <- tf_go_annot(plant_tf_db, go_db, tf_id) |>

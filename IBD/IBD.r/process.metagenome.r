@@ -1,6 +1,7 @@
-setwd("~/result/real-end/")
+library(dplyr)
+library(readxl)
 # read metagenome data
-metagenome <- read_xlsx("NIHMS1510763-supplement-Dataset_6.xlsx",
+metagenome <- read_xlsx("../IBD.data/NIHMS1510763-supplement-Dataset_6.xlsx",
             sheet = 1,
             skip = 1) %>% as.data.frame()
 Diagnosis <- metagenome[3, ]
@@ -9,11 +10,11 @@ sample_info <- names(Diagnosis)
 #clinical info
 meta <- data.frame(sample = sample_info, Diagnosis = unlist(Diagnosis))
 meta <- meta[-1, ]
-write.csv(meta, "mg.meta.csv", row.names = F)
+write.csv(meta, "../IBD.data/mg.meta.csv", row.names = F)
 
 
 #process metagenome gene abundance data 
-metagenome <- read_xlsx("NIHMS1510763-supplement-Dataset_6.xlsx",
+metagenome <- read_xlsx("../IBD.data/NIHMS1510763-supplement-Dataset_6.xlsx",
             sheet = 1,
             skip = 1) %>% as.data.frame()
 metagenome <- metagenome[-c(1:8), ]
@@ -22,7 +23,7 @@ metagenome$`# Feature / Sample` <-
   sub(":.*", "", metagenome$`# Feature / Sample`)
 
 #convert enzyme to keggID
-ezyme <- read.table("enzyme_ko.txt")
+ezyme <- read.table("../IBD.data/enzyme_ko.txt")
 ezyme$ko <- sub(".*:", "", ezyme$V2)
 ezyme$ec <- sub(".*:", "", ezyme$V1)
 metagenome$keggid <- ezyme$ko[match(metagenome$`# Feature / Sample`, ezyme$ec)]
@@ -38,4 +39,4 @@ metagenome.select <-
 row.names(metagenome.select) <- metagenome.select$Group.1
 metagenome.select <- metagenome.select[, -1]
 
-write.csv(metagenome.select, "mg.expr.csv")
+write.csv(metagenome.select, "../IBD.data/mg.expr.csv")

@@ -67,17 +67,17 @@ gs <- compareCluster(geneClusters = genelist , fun = "enricher",gson = gson_KO()
 plot.enrichment(gs = gs , title = "IBD 2 subtypes gene ORA", n = 15)
 ggsave("../IBD.output/IBD_2_subtypes_gene_ORA.pdf",width =5.5,height=7 )
 
-gs2 = pairwise_termsim(gs)
+gs2  <-  pairwise_termsim(gs)
 treeplot(gs2, offset_tiplab =9) + ggtitle("IBD 2 subtypes gene ORA")
 ggsave("../IBD.output/IBD_2_subtypes_in_metagenome_ORA(treeplot).pdf", width = 15, height = 5.5)
 
 
 #IBD-only-compound
 cpd.list <-  readRDS("../IBD.output/IBD.cpd.mpse.rds")
-gs = compareCluster(geneClusters = cpd.list, fun = "enricher", gson = gson_cpd())
+gs <- compareCluster(geneClusters = cpd.list, fun = "enricher", gson = gson_cpd())
 plot.enrichment(gs = gs, title = "IBD 2 subtypes compound ORA", n = 15)
 ggsave("../IBD.output/IBD_2_subtypes_in_metabolism_ORA.pdf", width = 5.5, height = 7)
 
-gs2 = pairwise_termsim(gs)
+gs2  <-  pairwise_termsim(gs)
 treeplot(gs2, offset_tiplab = 10, showCategory = 15) + ggtitle("IBD 2 subtypes compound ORA")
 ggsave("../IBD.output/IBD_2_subtypes_in_metabolism_ORA(treeplot).pdf", width = 40, height = 5.5)

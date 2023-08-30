@@ -1,10 +1,10 @@
 library(MicrobiotaProcess)
 
 #clinical info
-meta <- read.csv("../IBD.data/mg.meta.csv", header = T)
+meta <- read.csv("../input_data/mg.meta.csv", header = T)
 
 # read metagenome data
-metagenome <- read.csv("../IBD.data/mg.expr.csv", row.names = 1, header = 1)
+metagenome <- read.csv("../input_data/mg.expr.csv", row.names = 1, header = 1)
 colnames(metagenome) <- sub("\\.", "|", colnames(metagenome))
 mpse <- MPSE(metagenome)
 
@@ -48,4 +48,4 @@ genelist <- list(cd = mpse.cd.res %>%
                    dplyr::pull(OTU)
 )
 
-saveRDS(genelist, "../IBD.output/IBD.gene.mpse.rds")
+saveRDS(genelist, "../result/IBD.gene.mpse.rds")

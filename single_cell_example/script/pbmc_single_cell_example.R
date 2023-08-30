@@ -75,9 +75,20 @@ clusterprofiler_pbmc_plot <- sc_dim(clusterprofiler_pbmc) +
     theme(legend.position = 'none') 
 
 # compare two methods
-fig <- aplot::plot_list(seurat_pbmc_plot, 
-                        clusterprofiler_pbmc_plot, 
-                        ncol=2, tag_levels="A")
+library(aplot)
+fig <- seurat_pbmc_plot | clusterprofiler_pbmc_plot + 
+    plot_annotation(tag_levels = 'A') 
 
 ggsave(fig, file="single_cell_example/result/DimPlot.pdf", width=12, height=7)
 ggsave(fig, file="single_cell_example/result/DimPlot.png", width=12, height=7)
+
+d <- rbind(seurat_cluster_id, cell_type_predict)
+rownames(d) <- c("Known cell type", "Predicted cell type")    
+library(gridExtra)
+tabfig <- tableGrob(d, theme=ttheme_default(base_size=10))
+
+fig2 <-  (seurat_pbmc_plot | clusterprofiler_pbmc_plot) / tabfig + 
+    plot_layout(heights=c(1, .2)) + plot_annotation(tag_levels = 'A') 
+
+ggsave(fig2, file="single_cell_example/result/DimPlot2.pdf", width=15.5, height=7)
+ggsave(fig2, file="single_cell_example/result/DimPlot2.png", width=15.5, height=7)

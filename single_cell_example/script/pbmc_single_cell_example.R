@@ -38,27 +38,46 @@ seurat_cluster_id <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B", "CD8 T"
 names(seurat_cluster_id) <- levels(pbmc)
 seurat_pbmc <- RenameIdents(pbmc, seurat_cluster_id)
 seurat_pbmc_plot <- DimPlot(seurat_pbmc, label = TRUE, repel = TRUE) +
-    theme(legend.position = "none")
+    theme(legend.position = "none") 
 
 # cell type annotate using clusterProfiler
 predict_cell_type <- function(cell_type_enrich_result) {
-    cell_type_enrich_result <- as.data.frame(cell_type_enrich_result)
-    cell_type_enrich_result <- split(cell_type_enrich_result,
-        f = cell_type_enrich_result$Cluster)
-    sapply(cell_type_enrich_result, function(x) {
-        x$ID[which.min(x$qvalue)]
-    })
+    d <- as.data.frame(cell_type_enrich_result)
+    res <- split(d, d$Cluster) |>
+        sapply(function(x) {
+            x$ID[which.min(x$qvalue)]
+    }) 
+    
+    
+    ret <- gsub("_", " ", res) |>
+        yulab.utils::str_wrap(20)
+    
+    names(ret) <- names(res)
+    return(ret)
 }
+
 # Find cell group markers
 marker_gene <- GetGroupGeneSet(X = pbmc, group.by = "seurat_clusters",
     n.features = 20)
-cell_type_predict <- compareCluster(marker_gene, fun = "enricher",
-    TERM2GENE = cell_marker_db) |> predict_cell_type()
+
+cell_type_enrich_result <- compareCluster(marker_gene, fun = "enricher",
+    TERM2GENE = cell_marker_db) 
+    
+cell_type_predict <- predict_cell_type(cell_type_enrich_result)
+
 clusterprofiler_pbmc <- RenameIdents(pbmc, cell_type_predict)
-clusterprofiler_pbmc_plot <- DimPlot(
-    clusterprofiler_pbmc, label = FALSE, repel = TRUE) +
-    theme(legend.position = "none")
+
+
+
+library(ggsc)
+clusterprofiler_pbmc_plot <- sc_dim(clusterprofiler_pbmc) + 
+    sc_dim_geom_label(geom=ggrepel::geom_text_repel, color='black', bg.color = 'white') +
+    theme(legend.position = 'none') 
+
 # compare two methods
-seurat_pbmc_plot | clusterprofiler_pbmc_plot
+fig <- aplot::plot_list(seurat_pbmc_plot, 
+                        clusterprofiler_pbmc_plot, 
+                        ncol=2, tag_levels="A")
 
-
+ggsave(fig, file="single_cell_example/result/DimPlot.pdf", width=12, height=7)
+ggsave(fig, file="single_cell_example/result/DimPlot.png", width=12, height=7)

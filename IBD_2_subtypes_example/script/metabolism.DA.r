@@ -1,9 +1,9 @@
 library(MicrobiotaProcess)
 #clinical info
-meta <- read.csv("../input_data/metabolism_meta.csv",header = T)
+meta <- read.csv("IBD_2_subtypes_example/input_data/metabolism_meta.csv",header = T)
 
 # read metabolism  data
-metabolism <-read.csv("../input_data/metabolism_expr.csv",row.names = 1,header = 1)
+metabolism <-read.csv("IBD_2_subtypes_example/input_data/metabolism_expr.csv",row.names = 1,header = 1)
 
 colnames(metabolism) <- sub("\\.","|",colnames(metabolism))
 
@@ -40,4 +40,4 @@ genelist <- list(cd = mpse.cd %>%
                    dplyr::pull(OTU)
 )
 
-saveRDS(genelist, "../result/IBD.cpd.mpse.rds")
+saveRDS(genelist, "IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")

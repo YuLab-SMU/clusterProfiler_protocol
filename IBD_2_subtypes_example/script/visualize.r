@@ -34,6 +34,6 @@ ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA.pdf", wid
 
 gs2  <-  pairwise_termsim(gs)
 treeplot(gs2, offset_tiplab = 10, showCategory = 15) + ggtitle("IBD 2 subtypes compound ORA")
-ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA(treeplot).pdf", width = 40, height = 5.5)
+ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA(treeplot).pdf", width = 17, height = 12)
 
 

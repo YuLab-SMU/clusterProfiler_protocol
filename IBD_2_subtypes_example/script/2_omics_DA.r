@@ -1,9 +1,8 @@
 #clinical info
 library(MicrobiotaProcess)
-library(MicrobiotaProcess)
 #2 omics clinical info
 meta.mb <- read.csv("IBD_2_subtypes_example/input_data/metabolism_meta.csv",header = T)
-meta.mg <- read.csv("IBD_2_subtypes_example/input_data/mg.meta.csv")
+meta.mg <- read.csv("IBD_2_subtypes_example/input_data/mg.meta.csv",header=T)
 
 # read 2 omics expression data
 metabolism <-read.csv("IBD_2_subtypes_example/input_data/metabolism_expr.csv",row.names = 1,header = 1,check.name=F)
@@ -32,7 +31,7 @@ uc.mg <- DA(expr = metagenome,meta = meta.mg,group = c("Control","UC"),filter = 
 mg <- list(cd=cd.mg,uc=uc.mg)
 
 #Save the drawing data needed
-saveRDS("IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
+saveRDS(mg,"IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
 
 
 #Metabolomic differential analysis
@@ -41,7 +40,7 @@ uc.mb <- DA(expr=metabolism,meta = meta.mb , group = c("Control","UC"),filter = 
 mb<- list(cd=cd.mb,uc=uc.mb)
 
 #Save the drawing data needed
-saveRDS("IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
+saveRDS(mb,"IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")
 
 
 

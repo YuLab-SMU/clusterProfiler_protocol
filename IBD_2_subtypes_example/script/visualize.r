@@ -1,13 +1,11 @@
 #load pkgs
 library(clusterProfiler)
-library(gson)
 library(enrichplot)
-library(ggplot2)
 library(ggtreeExtra)
 
 plot.enrichment <- function(gs, title, n) {
   dotplot(gs,facet = "intersect",
-          showCategory = n, split = 'intersect') +
+          showCategory = n, split = 'intersect',label_format = 60) +
     scale_color_gradientn( colours = c("#b3eebe", "#46bac2", "#371ea3"),
                            guide = guide_colorbar(reverse = TRUE, order =1)) +
     guides(size = guide_legend(override.aes = list(shape = 1))) +
@@ -19,7 +17,7 @@ plot.enrichment <- function(gs, title, n) {
 genelist<- readRDS("IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
 gs <- compareCluster(geneClusters = genelist , fun = "enrichKEGG", organism = "ko")
 plot.enrichment(gs = gs , title = "IBD 2 subtypes gene ORA", n = 15)
-ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_gene_ORA.pdf",width =5.5,height=7 )
+ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_gene_ORA.pdf",width =9,height=9)
 
 gs2  <-  pairwise_termsim(gs)
 treeplot(gs2, offset_tiplab =9) + ggtitle("IBD 2 subtypes gene ORA")
@@ -30,7 +28,7 @@ ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metagenome_ORA(treeplot)
 cpd.list <-  readRDS("IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")
 gs <- compareCluster(geneClusters = cpd.list, fun = "enrichKEGG", organism = "cpd")
 plot.enrichment(gs = gs, title = "IBD 2 subtypes compound ORA", n = 15)
-ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA.pdf", width = 5.5, height = 7)
+ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA.pdf", width = 9, height = 9)
 
 gs2  <-  pairwise_termsim(gs)
 treeplot(gs2, offset_tiplab = 10, showCategory = 15) + ggtitle("IBD 2 subtypes compound ORA")

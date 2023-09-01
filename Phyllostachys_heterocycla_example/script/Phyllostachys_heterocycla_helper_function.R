@@ -100,9 +100,13 @@ gsea_analysis <- function(se, keytype = NULL,
     }
 }
 
-tf_go_annot <- function(plant_tf_db, go_db, tf_id) {
-    plant_tf_target_gene_list <- split(plant_tf_db$GENE, f = plant_tf_db$TERM)
-    compareCluster(plant_tf_target_gene_list[tf_id], fun = "enricher",
+tf_go_annot <- function(enrich_result, go_db) {
+    enrich_result_info <- as.data.frame(enrich_result)
+    gene_list <- strsplit(enrich_result_info$core_enrichment, split = "/")
+    names(gene_list) <- enrich_result_info$ID
+    gene_list <- stack(gene_list)
+    gene_list <- split(gene_list$values, gene_list$ind)
+    compareCluster(gene_list, fun = "enricher",
         TERM2GENE = go_db[, c("GO_ID", "Gene_id")],
         TERM2NAME = go_db[, c("GO_ID", "GO_term")])
 }

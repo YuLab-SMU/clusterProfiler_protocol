@@ -50,10 +50,18 @@ enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE, showCategory = 
 go_db <- read.table(
     file = "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_GO_annotation.txt",
     header = TRUE, sep = "\t", quote = "")
+
+
 tf_id <- unique(enrich_plot$data$ID)
-enrich_pathway_plot <- tf_go_annot(plant_tf_db, go_db, tf_id) |>
+
+tf_genes <- geneInCategory(compare_enrich_result) |> lapply(ls2df) |> do.call('rbind', args = _) |> with(data = _, split(value, category))
+
+y = compareCluster(tf_genes, fun='enricher', TERM2GENE = go_db[, c(2,1)], TERM2NAME= go_db[, c(2, 3)])
+
+# enrich_pathway_plot <- tf_go_annot(plant_tf_db, go_db, tf_id) |>
     # enrich_heatmap_plot()
-    dotplot(by = 'count', color='qvalue', showCategory = 3) +
+
+enrich_pathway_plot <-  dotplot(y, by = 'count', color='qvalue', showCategory = 3) +
     theme(axis.text.x = element_text(vjust = 1, hjust = 1, angle = 30, size=8)) +
     xlab(NULL)
 
@@ -62,10 +70,10 @@ plot_data <- subset(tf_id_annotation, TF_ID %in% tf_id)
 plot_data <- plot_data[order(plot_data$Family), ]
 plot_data$TF_ID <- factor(plot_data$TF_ID, levels = plot_data$TF_ID)
 tf_annot_plot <- ggplot(
-    data = plot_data, aes(x = TF_ID, y = "type", fill = Family)) +
+    data = plot_data, aes(x = TF_ID, y = 1, fill = Family)) +
     geom_tile() + scale_fill_manual(values = rainbow(11, alpha = .4)) + 
     ggfun::theme_nothing()
 
-fig <- insert_bottom(tf_annot_plot, enrich_plot, height = 10) |>
+fig <- insert_top(tf_annot_plot, enrich_plot, height = 5) |>
     insert_bottom(enrich_pathway_plot, height = 50)
 

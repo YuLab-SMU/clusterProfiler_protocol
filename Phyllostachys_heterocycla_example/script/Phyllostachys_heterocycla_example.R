@@ -52,18 +52,20 @@ go_db <- read.table(
     header = TRUE, sep = "\t", quote = "")
 tf_id <- unique(enrich_plot$data$ID)
 enrich_pathway_plot <- tf_go_annot(compare_enrich_result, go_db) |>
-    # enrich_heatmap_plot()
-    dotplot(by = 'count', color='qvalue', showCategory = 3) +
+    dotplot(by = 'count', color='qvalue', showCategory = 2) +
     theme(axis.text.x = element_text(vjust = 1, hjust = 1, angle = 30, size=8)) +
-    xlab(NULL)
+    xlab(NULL) + scale_color_gradientn(colors = c("#e06663", "#327eba"))
 
 # transcription factor family annotate
 plot_data <- subset(tf_id_annotation, TF_ID %in% tf_id)
 plot_data <- plot_data[order(plot_data$Family), ]
 plot_data$TF_ID <- factor(plot_data$TF_ID, levels = plot_data$TF_ID)
+
+
+
 tf_annot_plot <- ggplot(
     data = plot_data, aes(x = TF_ID, y = "type", fill = Family)) +
-    geom_tile() + scale_fill_manual(values = rainbow(11, alpha = .4)) + 
+    geom_tile() + scale_fill_manual(values = c("#63b2ee", "#76da91", "#f8cb7f", "#f89588", "#7cd6cf", "#9192ab", "#7898e1", "#efa666", "#eddd86", "#9987ce", "#63b2ee")) + 
     ggfun::theme_nothing()
 
 fig <- insert_top(tf_annot_plot, enrich_plot, height = 10) |>

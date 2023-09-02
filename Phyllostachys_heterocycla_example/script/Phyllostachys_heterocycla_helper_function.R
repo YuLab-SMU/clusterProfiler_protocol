@@ -110,18 +110,3 @@ tf_go_annot <- function(enrich_result, go_db) {
         TERM2GENE = go_db[, c("GO_ID", "Gene_id")],
         TERM2NAME = go_db[, c("GO_ID", "GO_term")])
 }
-
-enrich_heatmap_plot <- function(enrich_result, label_format = 60) {
-    default_labeller <- enrichplot:::default_labeller
-    plot_data <- as.data.frame(enrich_result)
-    plot_data$log_p <- -10 * log10(plot_data$qvalue)
-    ggplot(data = plot_data, aes(x = Cluster, y = Description,
-        fill = log_p)) + geom_raster() +
-        scale_y_discrete(labels = default_labeller(label_format)) +
-        scale_fill_gradient2(
-            low = "#b3eebe", high = "#371ea3", mid = "#46bac2") +
-        theme_bw() + theme_classic() + theme(axis.text.x = element_text(colour = "black",
-        size = 6, vjust = 1, hjust = 1, angle = 30),
-        axis.text.y = element_text(colour = "black",
-        size = 6, hjust = 1), axis.title = element_blank())
-}

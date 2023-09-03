@@ -39,7 +39,7 @@ compare_enrich_result <- compareCluster(
 
 enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE, showCategory = 25) +
     aes(shape = I(15)) +
-    scale_color_gradientn(colours=c("#b3eebe", "#46bac2", "#371ea3")) +
+    scale_color_gradientn(colours=c("#371ea3", "#46bac2", "#b3eebe")) +
     guides(size = guide_legend(override.aes=list(shape=0))) +
     theme_minimal() +
     theme(panel.grid.major.y = element_line(linetype='dotted', color='#808080'),
@@ -78,6 +78,7 @@ tf_annot_plot <- ggplot(
     data = plot_data, aes(x = TF_ID, y = 1, fill = Family)) +
     # geom_tile() + scale_fill_manual(values = rainbow(11, alpha = .4)) + 
     geom_tile() + 
+    ggsci::scale_fill_simpsons(alpha=.6) +
     #scale_fill_manual(values = c("#63b2ee", "#76da91", "#f8cb7f", "#f89588", "#7cd6cf", "#9192ab", "#7898e1", "#efa666", "#eddd86", "#9987ce", "#63b2ee")) +
     theme_minimal() +
     ggfun::theme_nothing()

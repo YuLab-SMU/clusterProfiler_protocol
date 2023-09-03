@@ -65,8 +65,9 @@ y = compareCluster(tf_genes, fun='enricher', TERM2GENE = go_db[, c(2,1)], TERM2N
 
 enrich_pathway_plot <-  dotplot(y, by = 'count', color='qvalue', showCategory = 3, label_format=40) +
     guides(size = guide_legend(override.aes=list(shape=1))) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(vjust = 1, hjust = 1, angle = 30, size=8)) +
+    theme_minimal(base_size=14) +
+    theme(axis.text.x = element_text(vjust = 1, hjust = 1, angle = 30, size=10),
+        axis.text.y = element_text(size=13, face='bold')) +
     xlab(NULL) + ggtitle(NULL) + 
     scale_color_gradientn(colors = c("#e06663", "#327eba"), guide = guide_colorbar(reverse=TRUE, order=1))
 
@@ -88,5 +89,5 @@ fig <- insert_top(tf_annot_plot, enrich_plot, height = 5) |>
     insert_bottom(enrich_pathway_plot, height = 50)
 
 
-ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.png', width=13, height=8)
-ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.pdf', width=13, height=8)
+ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.png', width=15, height=10)
+ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.pdf', width=15, height=10)

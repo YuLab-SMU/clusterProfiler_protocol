@@ -19,7 +19,7 @@ plot.enrichment <- function(gs, title, n=10) {
 genelist<- readRDS("IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
 gs <- compareCluster(geneClusters = genelist , fun = "enrichKEGG", organism = "ko")
 saveRDS(gs, file="IBD_2_subtypes_example/result/ko-ora.rds")
-p1 <- plot.enrichment(gs = gs , title = "IBD 2 subtypes gene ORA")
+p1 <- plot.enrichment(gs = gs , title = "Functional enrichment of intestinal genes")
 ggsave(p1, filename = "IBD_2_subtypes_example/result/IBD_2_subtypes_gene_ORA.pdf",width =9,height=9)
 
 gs2  <-  pairwise_termsim(gs)
@@ -31,7 +31,7 @@ ggsave("IBD_2_subtypes_example/result/IBD_2_subtypes_in_metagenome_ORA(treeplot)
 cpd.list <-  readRDS("IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")
 gs <- compareCluster(geneClusters = cpd.list, fun = "enrichKEGG", organism = "cpd")
 saveRDS(gs, file="IBD_2_subtypes_example/result/cpd-ora.rds")
-p2 <- plot.enrichment(gs = gs, title = "IBD 2 subtypes compound ORA")
+p2 <- plot.enrichment(gs = gs, title = "Functional enrichment of chemical compounds")
 ggsave(p2, filename = "IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA.pdf", width = 9, height = 9)
 
 gs2  <-  pairwise_termsim(gs)

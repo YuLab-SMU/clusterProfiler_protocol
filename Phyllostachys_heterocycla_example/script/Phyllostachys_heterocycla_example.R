@@ -58,7 +58,8 @@ go_db <- read.table(
 # y = compareCluster(tf_genes, fun='enricher', TERM2GENE = go_db[, c(2,1)], TERM2NAME= go_db[, c(2, 3)])
 
 
-tf_id <- unique(compare_enrich_result[,'ID'])
+# tf_id <- unique(compare_enrich_result[,'ID'])
+tf_id <- unique(enrich_plot$data$ID)
 tf_genes <- split(plant_tf_db$GENE, plant_tf_db$TERM)[tf_id]
 y = compareCluster(tf_genes, fun='enricher', TERM2GENE = go_db[, c(2,1)], TERM2NAME= go_db[, c(2, 3)])
 
@@ -87,5 +88,5 @@ fig <- insert_top(tf_annot_plot, enrich_plot, height = 5) |>
     insert_bottom(enrich_pathway_plot, height = 50)
 
 
-ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.png', width=16, height=10)
-ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.pdf', width=16, height=10)
+ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.png', width=13, height=8)
+ggsave(fig, file = './Phyllostachys_heterocycla_example/result/fig.pdf', width=13, height=8)

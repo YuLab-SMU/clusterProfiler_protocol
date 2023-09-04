@@ -33,6 +33,7 @@ all_result <- list(
 names(all_result) <- c("168h_vs_0h", "24h_vs_0h", "2h_vs_0h")
 
 # GSEA analysis
+set.seed(1234)
 compare_enrich_result <- compareCluster(
     all_result, fun = "GSEA", minGSSize = 10, maxGSSize = 500,
     pvalueCutoff = .05, TERM2GENE = plant_tf_db)

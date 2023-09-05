@@ -2,6 +2,7 @@
 library(clusterProfiler)
 library(enrichplot)
 library(ggtreeExtra)
+library(ggplot2)
 
 plot.enrichment <- function(gs, title, n=10) {
   dotplot(gs,facet = "intersect",

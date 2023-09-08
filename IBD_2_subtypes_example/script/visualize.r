@@ -12,8 +12,7 @@ plot.enrichment <- function(gs, title, n) {
     label_format = 60
   ) + scale_color_gradientn(
     colours = c("#b3eebe", "#46bac2", "#371ea3"),
-    guide = guide_colorbar(reverse = TRUE, order =
-                             1)
+    guide = guide_colorbar(reverse = TRUE, order = 1)
   ) +
     guides(size = guide_legend(override.aes = list(shape = 1))) +
     theme(

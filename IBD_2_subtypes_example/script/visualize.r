@@ -26,38 +26,39 @@ plot_enrichment <- function(gs, title, n = 10) {
 }
 
 #IBD-only-gene
-genelist <- readRDS("IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
+dir <- "IBD_2_subtypes_example/result"
+genelist <- readRDS(file.path(dir,"IBD.gene.mpse.rds"))
 gs <- compareCluster(geneClusters = genelist,
                      fun = "enrichKEGG",
                      organism = "ko")
-saveRDS(gs, file = "IBD_2_subtypes_example/result/ko-ora.rds")
+saveRDS(gs, file = file.path(dir,"ko-ora.rds"))
 p1 <- plot_enrichment(gs = gs,
-                      title = "Functional enrichment of intestinal genes")
+      title = "Functional enrichment of intestinal genes")
 ggsave(p1,
-       filename = "IBD_2_subtypes_example/result/IBD_2_subtypes_gene_ORA.pdf",
+       filename = file.path(dir,"IBD_2_subtypes_gene_ORA.pdf"),
        width = 9,
        height = 9)
 
 #IBD-only-compound
-cpd_list <- readRDS("IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")
+cpd_list <- readRDS(file.path(dir,"IBD.cpd.mpse.rds"))
 gs <- compareCluster(geneClusters = cpd_list,
                  fun = "enrichKEGG",
                  organism = "cpd")
-saveRDS(gs, file = "IBD_2_subtypes_example/result/cpd-ora.rds")
+saveRDS(gs, file = file.path(dir,"cpd-ora.rds"))
 p2 <- plot_enrichment(gs = gs,
-                  title = "Functional enrichment of chemical compounds")
+      title = "Functional enrichment of chemical compounds")
 ggsave(p2,
-       filename = "IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA.pdf",
+       filename = file.path(dir,"IBD_2_subtypes_in_metabolism_ORA.pdf"),
        width = 9,
        height = 9)
 
 fig = aplot::plot_list(p1, p2, tag_levels = 'A', tag_size = 15,
                        widths = c(1, .8))
 ggsave(fig,
-       file = "IBD_2_subtypes_example/result/fig.pdf",
+       file = file.path(dir,"fig.pdf"),
        width = 13,
        height = 6.5)
 ggsave(fig,
-       file = "IBD_2_subtypes_example/result/fig.png",
+       file = file.path(dir,"fig.png"),
        width = 13,
        height = 6.5)

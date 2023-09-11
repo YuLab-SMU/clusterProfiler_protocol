@@ -16,7 +16,7 @@ metagenome <- read.csv("IBD_2_subtypes_example/input_data/mg.expr.csv",
                        check.name = F)
 
 #difference analysis function
-DA <- function(expr, meta, DAgroup, filter.p = "fdr", filter.group) {
+DA <- function(expr, meta, DAgroup, filter_p = "fdr", filter_group) {
   mpse <- MPSE(expr)
   mpse <- mpse %>% left_join(meta, by = c('Sample' = 'sample'))
   result <- mpse %>%
@@ -26,20 +26,20 @@ DA <- function(expr, meta, DAgroup, filter.p = "fdr", filter.group) {
       .group = Diagnosis,
       force = TRUE,
       relative = FALSE,
-      filter.p = filter.p
+      filter.p = filter_p
     ) %>%
     mp_extract_feature() %>%
-    filter(Sign_Diagnosis == filter.group) %>%
+    filter(Sign_Diagnosis == filter_group) %>%
     pull(OTU)
 }
 
 #Metagenomic differential analysis
 cd.mg <- DA(expr = metagenome, meta = meta.mg, DAgroup = c("Control", "CD"),  
-             filter.group = "CD",
-             filter.p = "pvalue")
+             filter_group = "CD",
+             filter_p = "pvalue")
 uc.mg <- DA(expr = metagenome, meta = meta.mg, DAgroup = c("Control", "UC"), 
-             filter.group = "UC",
-             filter.p = "pvalue")
+             filter_group = "UC",
+             filter_p = "pvalue")
 mg <- list(cd = cd.mg, uc = uc.mg)
 
 #Save the drawing data needed
@@ -48,9 +48,9 @@ saveRDS(mg, "IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
 
 #Metabolomic differential analysis
 cd.mb <- DA(expr = metabolism, meta = meta.mb, DAgroup = c("Control", "CD"), 
-            filter.group = "CD")
+            filter_group = "CD")
 uc.mb <- DA(expr = metabolism, meta = meta.mb, DAgroup = c("Control", "UC"), 
-            filter.group = "UC")
+            filter_group = "UC")
 mb <- list(cd = cd.mb, uc = uc.mb)
 
 #Save the drawing data needed

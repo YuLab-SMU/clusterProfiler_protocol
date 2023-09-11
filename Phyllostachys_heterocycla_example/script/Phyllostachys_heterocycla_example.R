@@ -3,32 +3,34 @@ library(clusterProfiler)
 library(ggplot2)
 library(aplot)
 # prepare db
+input_dir <- "Phyllostachys_heterocycla_example/input_data"
 plant_tf_db <- read.table(
-  "Phyllostachys_heterocycla_example/input_data/annot_data/regulation_from_motif_CE_Phe.txt",
+  file.path(input_dir, "annot_data/regulation_from_motif_CE_Phe.txt"),
   sep = "\t", header = FALSE
 )
 plant_tf_db <- plant_tf_db[, c(1, 3)]
 colnames(plant_tf_db) <- c("TERM", "GENE")
 
 tf_id_annotation <- read.table(
-  "Phyllostachys_heterocycla_example/input_data/annot_data/Phe_TF_list.txt",
+  file.path(input_dir, "annot_data/Phe_TF_list.txt"),
   header = TRUE, sep = "\t"
 )
 
 # prepare counts
 counts <- read.table(
-  file = "Phyllostachys_heterocycla_example/input_data/counts.txt",
+  file = file.path(input_dir, "counts.txt"),
   header = TRUE, sep = "\t"
 )
 group_info <- read.table(
   header = TRUE,
-  file = "Phyllostachys_heterocycla_example/input_data/group_info.txt"
+  file = file.path(input_dir, "group_info.txt")
 )
 
 # data analysis
 count_dds <- DESeqDataSetFromMatrix(countData = counts,
                                     colData = group_info,
-                                    design = ~group) |> DESeq()
+                                    design = ~group)
+count_dds <- DESeq(count_dds)
 time_points <- setNames(object = c("168h", "24h", "2h"),
                         nm = c("168h_vs_0h", "24h_vs_0h", "2h_vs_0h"))
 all_result <- lapply(time_points, function(time_point) {
@@ -48,7 +50,9 @@ compare_enrich_result <- compareCluster(all_result, fun = "GSEA",
 enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
                        showCategory = 25) +
   aes(shape = I(15)) +
-  scale_color_gradientn(colours = c("#371ea3", "#46bac2", "#b3eebe")) +
+  scale_color_gradientn(
+    colours = c("#371ea3", "#46bac2", "#b3eebe")
+  ) +
   guides(size = guide_legend(override.aes = list(shape = 0))) +
   theme_minimal() +
   theme(panel.grid.major.y = element_line(linetype = "dotted",
@@ -62,14 +66,15 @@ enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
 
 # transcription factor function annotate
 go_db <- read.table(
-    file = "Phyllostachys_heterocycla_example/input_data/annot_data/Phe_GO_annotation.txt",
-    header = TRUE, sep = "\t", quote = "")
+  file = file.path(input_dir, "annot_data/Phe_GO_annotation.txt"),
+  header = TRUE, sep = "\t", quote = ""
+)
 
 tf_id <- unique(enrich_plot$data$ID)
 tf_genes <- split(plant_tf_db$GENE, plant_tf_db$TERM)[tf_id]
 y <- compareCluster(tf_genes, fun = "enricher",
-                   TERM2GENE = go_db[, c(2, 1)],
-                   TERM2NAME = go_db[, c(2, 3)])
+                    TERM2GENE = go_db[, c(2, 1)],
+                    TERM2NAME = go_db[, c(2, 3)])
 
 enrich_pathway_plot <- dotplot(y, by = "count", color = "qvalue",
                                showCategory = 3, label_format = 40) +

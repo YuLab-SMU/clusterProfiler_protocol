@@ -4,7 +4,7 @@ library(enrichplot)
 library(ggtreeExtra)
 library(ggplot2)
 
-plot.enrichment <- function(gs, title, n = 10) {
+plot_enrichment <- function(gs, title, n = 10) {
   dotplot(
     gs,
     facet = "intersect",
@@ -27,23 +27,25 @@ plot.enrichment <- function(gs, title, n = 10) {
 
 #IBD-only-gene
 genelist <- readRDS("IBD_2_subtypes_example/result/IBD.gene.mpse.rds")
-gs <- compareCluster(geneClusters = genelist ,
+gs <- compareCluster(geneClusters = genelist,
                      fun = "enrichKEGG",
                      organism = "ko")
 saveRDS(gs, file = "IBD_2_subtypes_example/result/ko-ora.rds")
-p1 <- plot.enrichment(gs = gs , title = "Functional enrichment of intestinal genes")
+p1 <- plot_enrichment(gs = gs,
+                      title = "Functional enrichment of intestinal genes")
 ggsave(p1,
        filename = "IBD_2_subtypes_example/result/IBD_2_subtypes_gene_ORA.pdf",
        width = 9,
        height = 9)
 
 #IBD-only-compound
-cpd.list <- readRDS("IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")
-gs <- compareCluster(geneClusters = cpd.list,
+cpd_list <- readRDS("IBD_2_subtypes_example/result/IBD.cpd.mpse.rds")
+gs <- compareCluster(geneClusters = cpd_list,
                  fun = "enrichKEGG",
                  organism = "cpd")
 saveRDS(gs, file = "IBD_2_subtypes_example/result/cpd-ora.rds")
-p2 <- plot.enrichment(gs = gs, title = "Functional enrichment of chemical compounds")
+p2 <- plot_enrichment(gs = gs,
+                  title = "Functional enrichment of chemical compounds")
 ggsave(p2,
        filename = "IBD_2_subtypes_example/result/IBD_2_subtypes_in_metabolism_ORA.pdf",
        width = 9,

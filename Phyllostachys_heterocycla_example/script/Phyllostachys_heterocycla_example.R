@@ -4,14 +4,14 @@ library(ggplot2)
 library(aplot)
 # prepare db
 plant_tf_db <- read.table(
-  "./Phyllostachys_heterocycla_example/input_data/annot_data/regulation_from_motif_CE_Phe.txt",
+  "Phyllostachys_heterocycla_example/input_data/annot_data/regulation_from_motif_CE_Phe.txt",
   sep = "\t", header = FALSE
 )
 plant_tf_db <- plant_tf_db[, c(1, 3)]
 colnames(plant_tf_db) <- c("TERM", "GENE")
 
 tf_id_annotation <- read.table(
-  "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_TF_list.txt",
+  "Phyllostachys_heterocycla_example/input_data/annot_data/Phe_TF_list.txt",
   header = TRUE, sep = "\t"
 )
 
@@ -26,34 +26,17 @@ group_info <- read.table(
 )
 
 # data analysis
-seven_day_result <- DESeqDataSetFromMatrix(countData = counts,
-                                           colData = group_info,
-                                           design = ~group) |>
-  DESeq() |>
-  results(tidy = TRUE, contrast = c("group", "168h", "0h"))
-
-one_day_result <- DESeqDataSetFromMatrix(countData = counts,
-                                         colData = group_info,
-                                         design = ~group) |>
-  DESeq() |>
-  results(tidy = TRUE, contrast = c("group", "24h", "0h"))
-
-two_hour_result <- DESeqDataSetFromMatrix(countData = counts,
-                                          colData = group_info,
-                                          design = ~group) |>
-  DESeq() |>
-  results(tidy = TRUE, contrast = c("group", "2h", "0h"))
-
-all_result <- list(setNames(object = seven_day_result$log2FoldChange,
-                            nm = seven_day_result$row) |>
-                     sort(decreasing = TRUE),
-                   setNames(object = one_day_result$log2FoldChange,
-                            nm = one_day_result$row) |>
-                     sort(decreasing = TRUE),
-                   setNames(object = two_hour_result$log2FoldChange,
-                            nm = two_hour_result$row) |>
-                     sort(decreasing = TRUE))
-names(all_result) <- c("168h_vs_0h", "24h_vs_0h", "2h_vs_0h")
+count_dds <- DESeqDataSetFromMatrix(countData = counts,
+                                    colData = group_info,
+                                    design = ~group) |> DESeq()
+time_points <- setNames(object = c("168h", "24h", "2h"),
+                        nm = c("168h_vs_0h", "24h_vs_0h", "2h_vs_0h"))
+all_result <- lapply(time_points, function(time_point) {
+  result <- results(count_dds, tidy = TRUE,
+                    contrast = c("group", time_point, "0h"))
+  setNames(object = result$log2FoldChange, nm = result$row) |>
+    sort(decreasing = TRUE)
+})
 
 # GSEA analysis
 set.seed(1234)
@@ -79,7 +62,7 @@ enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
 
 # transcription factor function annotate
 go_db <- read.table(
-    file = "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_GO_annotation.txt",
+    file = "Phyllostachys_heterocycla_example/input_data/annot_data/Phe_GO_annotation.txt",
     header = TRUE, sep = "\t", quote = "")
 
 tf_id <- unique(enrich_plot$data$ID)
@@ -112,7 +95,6 @@ tf_annot_plot <- ggplot(data = plot_data,
 
 fig <- insert_top(tf_annot_plot, enrich_plot, height = 5) |>
   insert_bottom(enrich_pathway_plot, height = 50)
-
 
 ggsave(fig, file = "Phyllostachys_heterocycla_example/result/fig.png",
        width = 15, height = 10)

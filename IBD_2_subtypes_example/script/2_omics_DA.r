@@ -3,27 +3,27 @@ library(MicrobiotaProcess)
 # 2 omics clinical info
 input_dir <- "IBD_2_subtypes_example/input_data"
 output_dir <- "IBD_2_subtypes_example/result"
-meta_mb <- read.csv(file.path(input_dir, "metabolism_meta.csv"),
-                    header = TRUE)
-meta_mg <- read.csv(file.path(input_dir, "mg.meta.csv"),
-                    header = TRUE)
+meta_mb <- read.csv(file.path(input_dir, "metabolism_meta.csv"), header = TRUE)
+meta_mg <- read.csv(file.path(input_dir, "mg.meta.csv"), header = TRUE)
 
 # read 2 omics expression data
 metabolism <- read.csv(file.path(input_dir, "metabolism_expr.csv"),
                        row.names = 1,
                        header = TRUE,
-                       check.name = FALSE)
+                       check.name = FALSE
+)
 metagenome <- read.csv(file.path(input_dir, "mg.expr.csv"),
                        row.names = 1,
                        header = TRUE,
-                       check.name = FALSE)
+                       check.name = FALSE
+)
 
 # difference analysis function
 DA <- function(expr, meta, diff_group) {
   mpse <- MPSE(expr)
-  mpse <- mpse %>% left_join(meta,by="Sample")
+  mpse <- mpse %>% left_join(meta, by = "Sample")
   mpse %>%
-    filter(Diagnosis %in% c("Control",diff_group)) %>%
+    filter(Diagnosis %in% c("Control", diff_group)) %>%
     mp_diff_analysis(
       .abundance = Abundance,
       .group = Diagnosis,

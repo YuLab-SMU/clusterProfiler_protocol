@@ -3,57 +3,42 @@ library(clusterProfiler)
 library(ggplot2)
 library(aplot)
 # prepare db
+input_dir <- "Phyllostachys_heterocycla_example/input_data"
 plant_tf_db <- read.table(
-  "./Phyllostachys_heterocycla_example/input_data/annot_data/regulation_from_motif_CE_Phe.txt",
+  file.path(input_dir, "annot_data/regulation_from_motif_CE_Phe.txt"),
   sep = "\t", header = FALSE
 )
 plant_tf_db <- plant_tf_db[, c(1, 3)]
 colnames(plant_tf_db) <- c("TERM", "GENE")
 
 tf_id_annotation <- read.table(
-  "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_TF_list.txt",
+  file.path(input_dir, "annot_data/Phe_TF_list.txt"),
   header = TRUE, sep = "\t"
 )
 
 # prepare counts
 counts <- read.table(
-  file = "Phyllostachys_heterocycla_example/input_data/counts.txt",
+  file = file.path(input_dir, "counts.txt"),
   header = TRUE, sep = "\t"
 )
 group_info <- read.table(
   header = TRUE,
-  file = "Phyllostachys_heterocycla_example/input_data/group_info.txt"
+  file = file.path(input_dir, "group_info.txt")
 )
 
 # data analysis
-seven_day_result <- DESeqDataSetFromMatrix(countData = counts,
-                                           colData = group_info,
-                                           design = ~group) |>
-  DESeq() |>
-  results(tidy = TRUE, contrast = c("group", "168h", "0h"))
-
-one_day_result <- DESeqDataSetFromMatrix(countData = counts,
-                                         colData = group_info,
-                                         design = ~group) |>
-  DESeq() |>
-  results(tidy = TRUE, contrast = c("group", "24h", "0h"))
-
-two_hour_result <- DESeqDataSetFromMatrix(countData = counts,
-                                          colData = group_info,
-                                          design = ~group) |>
-  DESeq() |>
-  results(tidy = TRUE, contrast = c("group", "2h", "0h"))
-
-all_result <- list(setNames(object = seven_day_result$log2FoldChange,
-                            nm = seven_day_result$row) |>
-                     sort(decreasing = TRUE),
-                   setNames(object = one_day_result$log2FoldChange,
-                            nm = one_day_result$row) |>
-                     sort(decreasing = TRUE),
-                   setNames(object = two_hour_result$log2FoldChange,
-                            nm = two_hour_result$row) |>
-                     sort(decreasing = TRUE))
-names(all_result) <- c("168h_vs_0h", "24h_vs_0h", "2h_vs_0h")
+count_dds <- DESeqDataSetFromMatrix(countData = counts,
+                                    colData = group_info,
+                                    design = ~group)
+count_dds <- DESeq(count_dds)
+time_points <- setNames(object = c("168h", "24h", "2h"),
+                        nm = c("168h_vs_0h", "24h_vs_0h", "2h_vs_0h"))
+all_result <- lapply(time_points, function(time_point) {
+  result <- results(count_dds, tidy = TRUE,
+                    contrast = c("group", time_point, "0h"))
+  setNames(object = result$log2FoldChange, nm = result$row) |>
+    sort(decreasing = TRUE)
+})
 
 # GSEA analysis
 set.seed(1234)
@@ -65,7 +50,9 @@ compare_enrich_result <- compareCluster(all_result, fun = "GSEA",
 enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
                        showCategory = 25) +
   aes(shape = I(15)) +
-  scale_color_gradientn(colours = c("#371ea3", "#46bac2", "#b3eebe")) +
+  scale_color_gradientn(
+    colours = c("#371ea3", "#46bac2", "#b3eebe")
+  ) +
   guides(size = guide_legend(override.aes = list(shape = 0))) +
   theme_minimal() +
   theme(panel.grid.major.y = element_line(linetype = "dotted",
@@ -79,14 +66,15 @@ enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
 
 # transcription factor function annotate
 go_db <- read.table(
-    file = "./Phyllostachys_heterocycla_example/input_data/annot_data/Phe_GO_annotation.txt",
-    header = TRUE, sep = "\t", quote = "")
+  file = file.path(input_dir, "annot_data/Phe_GO_annotation.txt"),
+  header = TRUE, sep = "\t", quote = ""
+)
 
 tf_id <- unique(enrich_plot$data$ID)
 tf_genes <- split(plant_tf_db$GENE, plant_tf_db$TERM)[tf_id]
 y <- compareCluster(tf_genes, fun = "enricher",
-                   TERM2GENE = go_db[, c(2, 1)],
-                   TERM2NAME = go_db[, c(2, 3)])
+                    TERM2GENE = go_db[, c(2, 1)],
+                    TERM2NAME = go_db[, c(2, 3)])
 
 enrich_pathway_plot <- dotplot(y, by = "count", color = "qvalue",
                                showCategory = 3, label_format = 40) +
@@ -112,7 +100,6 @@ tf_annot_plot <- ggplot(data = plot_data,
 
 fig <- insert_top(tf_annot_plot, enrich_plot, height = 5) |>
   insert_bottom(enrich_pathway_plot, height = 50)
-
 
 ggsave(fig, file = "Phyllostachys_heterocycla_example/result/fig.png",
        width = 15, height = 10)

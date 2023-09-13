@@ -19,36 +19,51 @@ metagenome <- read.csv(file.path(input_dir, "mg.expr.csv"),
 )
 
 # difference analysis function
-DA <- function(expr, meta, diff_group) {
+DA <- function(expr, meta, group.colname, subset.group, 
+               diff.group, filter.p = 'pvalue', ...) {
+  sign.group.colname <- paste0('Sign_', group.colname)
   mpse <- MPSE(expr)
-  mpse <- mpse %>% left_join(meta, by = "Sample")
-  mpse %>%
-    filter(Diagnosis %in% c("Control", diff_group)) %>%
+  mpse <- mpse |> left_join(meta, by = "Sample")
+  mpse |>
+    dplyr::filter(!!as.symbol(group.colname) %in% subset.group) |>
     mp_diff_analysis(
       .abundance = Abundance,
-      .group = Diagnosis,
+      .group = !!as.symbol(group.colname),
       force = TRUE,
       relative = FALSE,
-      filter.p = "pvalue"
-    ) %>%
-    mp_extract_feature() %>%
-    filter(Sign_Diagnosis == diff_group) %>%
-    pull(OTU)
+      filter.p = filter.p,
+      ...
+    ) |>
+    mp_extract_feature() |>
+    dplyr::filter(!!as.symbol(sign.group.colname) == diff.group) |>
+    dplyr::pull(OTU)
 }
 
 # Metagenomic differential analysis
-cases <- c("CD", "UC")
-mg <- lapply(cases, function(case) {
-  DA(expr = metagenome, meta = meta_mg, diff_group = case)
+subset.groups <- list(c('Control', 'CD'), c('Control', 'UC')
+mg <- lapply(subset.groups, function(x){
+    DA(expr = metagenome, 
+       meta = meta_mg, 
+       group.colname = 'Diagnosis', 
+       subset.group = x, 
+       diff.group = setdiff(x, 'Control'),
+    )
 })
-names(mg) <- cases
+names(mg) <- c('CD', 'UC')
+
 # Save the drawing data needed
 saveRDS(mg, file.path(output_dir, "IBD.gene.mpse.rds"))
 
 # Metabolomic differential analysis
-mb <- lapply(cases, function(case) {
-  DA(expr = metabolism, meta = meta_mb, diff_group = case)
+mb <- lapply(subset.groups, function(x){
+    DA(expr = metabolism,
+       meta = meta_mb,
+       group.colname = 'Diagnosis',
+       subset.group = x,
+       diff.group = setdiff(x, 'Control'),
+    )
 })
-names(mb) <- cases
+names(mb) <- c('CD', 'UC')
+
 # Save the drawing data needed
 saveRDS(mb, file.path(output_dir, "IBD.cpd.mpse.rds"))

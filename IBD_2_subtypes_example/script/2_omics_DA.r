@@ -10,17 +10,23 @@ meta_mg <- read.csv(file.path(input_dir, "mg.meta.csv"), header = TRUE)
 metabolism <- read.csv(file.path(input_dir, "metabolism_expr.csv"),
                        row.names = 1,
                        header = TRUE,
-                       check.name = FALSE
-)
+                       check.name = FALSE)
+
 metagenome <- read.csv(file.path(input_dir, "mg.expr.csv"),
                        row.names = 1,
                        header = TRUE,
-                       check.name = FALSE
-)
+                       check.name = FALSE)
 
 # difference analysis function
-DA <- function(expr, meta, abundance, group.colname, subset.group, 
-               diff.group, filter.p = 'pvalue', ...) {
+DA <- function(expr, 
+               meta, 
+               abundance = 'Abundance', 
+               group.colname = 'Diagnosis', 
+               force = TRUE,
+               relative = FALSE,
+               subset.group, 
+               diff.group, 
+               filter.p = 'pvalue', ...) {
   sign.group.colname <- paste0('Sign_', group.colname)
   mpse <- MPSE(expr)
   mpse <- mpse |> left_join(meta, by = "Sample")
@@ -29,8 +35,8 @@ DA <- function(expr, meta, abundance, group.colname, subset.group,
     mp_diff_analysis(
       .abundance = !!as.symbol(abundance),
       .group = !!as.symbol(group.colname),
-      force = TRUE,
-      relative = FALSE,
+      force = force,
+      relative = relative,
       filter.p = filter.p,
       ...
     ) |>
@@ -44,8 +50,6 @@ subset.groups <- list(c('Control', 'CD'), c('Control', 'UC'))
 mg <- lapply(subset.groups, function(x){
     DA(expr = metagenome, 
        meta = meta_mg, 
-       abundance = "Abundance",
-       group.colname = "Diagnosis", 
        subset.group = x, 
        diff.group = setdiff(x, 'Control'),
     )
@@ -59,8 +63,6 @@ saveRDS(mg, file.path(output_dir, "IBD.gene.mpse.rds"))
 mb <- lapply(subset.groups, function(x){
     DA(expr = metabolism,
        meta = meta_mb,
-       abundance = "Abundance",
-       group.colname = 'Diagnosis',
        subset.group = x,
        diff.group = setdiff(x, 'Control'),
     )

@@ -19,7 +19,7 @@ metagenome <- read.csv(file.path(input_dir, "mg.expr.csv"),
 )
 
 # difference analysis function
-DA <- function(expr, meta, group.colname, subset.group, 
+DA <- function(expr, meta, abundance, group.colname, subset.group, 
                diff.group, filter.p = 'pvalue', ...) {
   sign.group.colname <- paste0('Sign_', group.colname)
   mpse <- MPSE(expr)
@@ -27,7 +27,7 @@ DA <- function(expr, meta, group.colname, subset.group,
   mpse |>
     dplyr::filter(!!as.symbol(group.colname) %in% subset.group) |>
     mp_diff_analysis(
-      .abundance = Abundance,
+      .abundance = !!as.symbol(abundance),
       .group = !!as.symbol(group.colname),
       force = TRUE,
       relative = FALSE,
@@ -40,11 +40,12 @@ DA <- function(expr, meta, group.colname, subset.group,
 }
 
 # Metagenomic differential analysis
-subset.groups <- list(c('Control', 'CD'), c('Control', 'UC')
+subset.groups <- list(c('Control', 'CD'), c('Control', 'UC'))
 mg <- lapply(subset.groups, function(x){
     DA(expr = metagenome, 
        meta = meta_mg, 
-       group.colname = 'Diagnosis', 
+       abundance = "Abundance",
+       group.colname = "Diagnosis", 
        subset.group = x, 
        diff.group = setdiff(x, 'Control'),
     )
@@ -58,6 +59,7 @@ saveRDS(mg, file.path(output_dir, "IBD.gene.mpse.rds"))
 mb <- lapply(subset.groups, function(x){
     DA(expr = metabolism,
        meta = meta_mb,
+       abundance = "Abundance",
        group.colname = 'Diagnosis',
        subset.group = x,
        diff.group = setdiff(x, 'Control'),

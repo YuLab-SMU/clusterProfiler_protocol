@@ -58,7 +58,7 @@ predict_cell_type <- function(cell_type_enrich_result) {
       x$ID[which.min(x$qvalue)]
     })
   ret <- gsub("_", " ", res) |>
-    yulab.utils::str_wrap(20)
+    yulab.utils::str_wrap(18)
   names(ret) <- names(res)
   return(ret)
 }

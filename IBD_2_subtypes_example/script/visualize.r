@@ -4,20 +4,27 @@ library(enrichplot)
 library(ggtreeExtra)
 library(ggplot2)
 
+np_style <- function(colors = c("#e06663", "#327eba"), legend_shape=1, title = NULL) {
+  list(scale_color_gradientn(colors = colors,
+        guide = guide_colorbar(reverse = TRUE, order = 1)),
+    guides(size = guide_legend(override.aes = list(shape = legend_shape))),
+    ggtitle(title),
+    xlab(NULL)
+  )
+}
+
+
+
 plot_enrichment <- function(gs, title, n = 10) {
   dotplot(gs, facet = "intersect", showCategory = n,
           split = "intersect", label_format = 60) +
-    scale_color_gradientn(colors = c("#e06663", "#327eba"),
-      guide = guide_colorbar(reverse = TRUE, order = 1)
-    ) +
-    guides(size = guide_legend(override.aes = list(shape = 1))) +
     theme(
       panel.grid.major.y = element_line(linetype = "dotted",
                                         color = "#808080"),
       panel.grid.major.x = element_blank(),
       plot.title = element_text(hjust = 1)
     ) +
-    ggtitle(title) + xlab(NULL)
+    np_style()
 }
 
 #IBD-only-gene

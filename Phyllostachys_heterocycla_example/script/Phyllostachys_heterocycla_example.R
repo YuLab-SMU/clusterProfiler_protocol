@@ -2,6 +2,17 @@ library(DESeq2)
 library(clusterProfiler)
 library(ggplot2)
 library(aplot)
+
+np_style <- function(colors = c("#e06663", "#327eba"), legend_shape=1, title = NULL) {
+  list(scale_color_gradientn(colors = colors,
+        guide = guide_colorbar(reverse = TRUE, order = 1)),
+    guides(size = guide_legend(override.aes = list(shape = legend_shape))),
+    ggtitle(title),
+    xlab(NULL)
+  )
+}
+
+
 # prepare db
 input_dir <- "Phyllostachys_heterocycla_example/input_data"
 plant_tf_db <- read.table(
@@ -50,20 +61,17 @@ compare_enrich_result <- compareCluster(all_result, fun = "GSEA",
 enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
                        showCategory = 25) +
   aes(shape = I(15)) +
-  scale_color_gradientn(
-    colours = c("#371ea3", "#46bac2", "#b3eebe")
-  ) +
-  guides(size = guide_legend(override.aes = list(shape = 0))) +
+  coord_flip() +
   theme_minimal() +
   theme(panel.grid.major.y = element_line(linetype = "dotted",
                                           color = "#808080"),
-        panel.grid.major.x = element_blank()) +
-  coord_flip() +
-  theme(axis.text.x = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.text.x = element_blank(),
         axis.ticks = element_blank(),
         axis.text.y = element_text(size = 15),
-        axis.title.y = element_blank())
-
+        axis.title.y = element_blank()) +
+  np_style(colours = c("#371ea3", "#46bac2", "#b3eebe"), legend_shape=0)
+ 
 # transcription factor function annotate
 go_db <- read.table(
   file = file.path(input_dir, "annot_data/Phe_GO_annotation.txt"),
@@ -78,15 +86,17 @@ y <- compareCluster(tf_genes, fun = "enricher",
 
 enrich_pathway_plot <- dotplot(y, by = "count", color = "qvalue",
                                showCategory = 3, label_format = 40) +
-  guides(size = guide_legend(override.aes = list(shape = 1))) +
   theme_minimal(base_size = 14) +
   theme(axis.text.x = element_text(vjust = 1, hjust = 1,
                                    angle = 30, size = 10),
         axis.text.y = element_text(size = 13, face = "bold")) +
-  xlab(NULL) + ggtitle(NULL) +
-  scale_color_gradientn(colors = c("#e06663", "#327eba"),
-                        guide = guide_colorbar(reverse = TRUE,
-                                               order = 1))
+  np_style()
+
+#  guides(size = guide_legend(override.aes = list(shape = 1))) +
+#  xlab(NULL) + ggtitle(NULL) +
+#  scale_color_gradientn(colors = c("#e06663", "#327eba"),
+#                        guide = guide_colorbar(reverse = TRUE,
+#                                               order = 1))
 
 # transcription factor family annotate
 plot_data <- subset(tf_id_annotation, TF_ID %in% tf_id)

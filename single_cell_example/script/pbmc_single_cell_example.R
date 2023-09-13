@@ -86,6 +86,7 @@ library(aplot)
 fig <- seurat_pbmc_plot | clusterprofiler_pbmc_plot +
   plot_annotation(tag_levels = "A")
 
+
 ggsave(fig, file = "single_cell_example/result/DimPlot.pdf",
   width = 12, height = 7
 )
@@ -95,11 +96,23 @@ ggsave(fig, file = "single_cell_example/result/DimPlot.png",
 
 d <- rbind(seurat_cluster_id, cell_type_predict)
 rownames(d) <- c("Known cell type", "Predicted cell type")
+
+
 library(gridExtra)
-tabfig <- tableGrob(d, theme=ttheme_default(base_size=10))
+dd <- layer_data(clusterprofiler_pbmc_plot)
+dd <- unique(dd[, c("colour", "group")])
+tabfig <- tableGrob(d, theme=ttheme_default(base_size=10, colhead=list(bg_params = list(fill=dd$colour[order(dd$group)]))))
+
+#grid::grid.draw(tabfig)
 
 fig2 <- (seurat_pbmc_plot | clusterprofiler_pbmc_plot) / tabfig +
   plot_layout(heights = c(1, .2)) + plot_annotation(tag_levels = "A")
+
+
+#fig2 <- aplot::plot_list(seurat_pbmc_plot, clusterprofiler_pbmc_plot, ggplotify::as.ggplot(tabfig), 
+#  design="AABB\nCCCC", tag_levels = 'A', heights=c(1, .2))
+
+fig2
 
 ggsave(fig2, file = "single_cell_example/result/DimPlot2.pdf",
   width = 15.5, height = 7

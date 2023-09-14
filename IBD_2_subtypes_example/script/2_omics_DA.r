@@ -46,28 +46,26 @@ DA <- function(expr,
 }
 
 # Metagenomic differential analysis
-subset.groups <- list(c('Control', 'CD'), c('Control', 'UC'))
-mg <- lapply(subset.groups, function(x){
+groups <- c('CD', 'UC')
+mg <- lapply(groups, function(x){
     DA(expr = metagenome, 
        meta = meta_mg, 
-       subset.group = x, 
-       diff.group = setdiff(x, 'Control'),
+       subset.group = c(x, 'Control'), 
+       diff.group = x,
     )
-})
-names(mg) <- c('CD', 'UC')
+}) |> setNames(groups)
 
 # Save the drawing data needed
 saveRDS(mg, file.path(output_dir, "IBD.gene.mpse.rds"))
 
 # Metabolomic differential analysis
-mb <- lapply(subset.groups, function(x){
+mb <- lapply(groups, function(x){
     DA(expr = metabolism,
        meta = meta_mb,
-       subset.group = x,
-       diff.group = setdiff(x, 'Control'),
+       subset.group = c(x, 'Control'),
+       diff.group = x,
     )
-})
-names(mb) <- c('CD', 'UC')
+}) |> setNames(groups)
 
 # Save the drawing data needed
 saveRDS(mb, file.path(output_dir, "IBD.cpd.mpse.rds"))

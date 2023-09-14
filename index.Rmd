@@ -1,0 +1,31 @@
+
+---
+title: "clusterProfiler: The 'Paintbrush' for Portraying Multi-Omics Data"
+subtitle: "online example data"
+author: "Maintained by YuLab-SMU"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+---
+
+
+
+```{r echo=FALSE, results="hide", message=FALSE, warning=FALSE}
+library(fs)
+library(knitr)
+```
+
+
+```{r echo=FALSE}
+library(fs)
+
+x <- dir_info('examples', recurse = TRUE)[, 1:3] |> 
+    as.data.frame()
+
+x$path <- sprintf("[%s](%s)", x$path, x$path)
+
+knitr::kable(x)
+```

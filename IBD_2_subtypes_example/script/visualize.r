@@ -4,14 +4,6 @@ library(enrichplot)
 library(ggtreeExtra)
 library(ggplot2)
 
-np_style <- function(colors = c("#e06663", "#327eba"), legend_shape=1, title = NULL) {
-  list(scale_color_gradientn(colors = colors,
-        guide = guide_colorbar(reverse = TRUE, order = 1)),
-    guides(size = guide_legend(override.aes = list(shape = legend_shape))),
-    ggtitle(title),
-    xlab(NULL)
-  )
-}
 
 
 
@@ -34,9 +26,17 @@ gs <- compareCluster(geneClusters = genelist,
                      fun = "enrichKEGG",
                      organism = "ko")
 saveRDS(gs, file = file.path(dir,"ko-ora.rds"))
+
+gs <- readRDS(file.path(dir,"ko-ora.rds"))
+
 p1 <- plot_enrichment(gs = gs,
   title = "Functional enrichment of intestinal genes"
 )
+
+p1 <- dotplot(gs, facet='intersect', showCategory = 10, split = "intersect", label_format = 60) +
+  ggtitle("Functional enrichment of intestinal genes") + 
+  theme(plot.title = element_text(hjust = 1))
+
 ggsave(p1,
        filename = file.path(dir, "IBD_2_subtypes_gene_ORA.pdf"),
        width = 9,
@@ -48,9 +48,17 @@ gs <- compareCluster(geneClusters = cpd_list,
                      fun = "enrichKEGG",
                      organism = "cpd")
 saveRDS(gs, file = file.path(dir, "cpd-ora.rds"))
+gs <- readRDS(file.path(dir, "cpd-ora.rds"))
+
+
 p2 <- plot_enrichment(gs = gs,
   title = "Functional enrichment of chemical compounds"
 )
+
+p2 <- dotplot(gs, facet='intersect', showCategory = 10, split = "intersect", label_format = 60) +
+  ggtitle("Functional enrichment of chemical compounds") +
+  theme(plot.title = element_text(hjust = 1))
+
 ggsave(p2,
        filename = file.path(dir,"IBD_2_subtypes_in_metabolism_ORA.pdf"),
        width = 9,
@@ -58,6 +66,7 @@ ggsave(p2,
 
 fig  <-  aplot::plot_list(p1, p2, tag_levels = "A", tag_size = 15,
                           widths = c(1, .8))
+                          
 ggsave(fig,
        file = file.path(dir, "fig.pdf"),
        width = 13,

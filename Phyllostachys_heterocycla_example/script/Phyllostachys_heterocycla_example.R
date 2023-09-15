@@ -2,15 +2,17 @@ library(DESeq2)
 library(clusterProfiler)
 library(ggplot2)
 library(aplot)
+library(ggfun)
+library(enrichplot)
 
-np_style <- function(colors = c("#e06663", "#327eba"), legend_shape=1, title = NULL) {
-  list(scale_color_gradientn(colors = colors,
-        guide = guide_colorbar(reverse = TRUE, order = 1)),
-    guides(size = guide_legend(override.aes = list(shape = legend_shape))),
-    ggtitle(title),
-    xlab(NULL)
-  )
-}
+#np_style <- function(colors = c("#e06663", "#327eba"), legend_shape=1, title = NULL) {
+#  list(scale_color_gradientn(colors = colors,
+#        guide = guide_colorbar(reverse = TRUE, order = 1)),
+#    guides(size = guide_legend(override.aes = list(shape = legend_shape))),
+#    ggtitle(title),
+#    xlab(NULL)
+#  )
+#}
 
 
 # prepare db
@@ -32,6 +34,7 @@ counts <- read.table(
   file = file.path(input_dir, "counts.txt"),
   header = TRUE, sep = "\t"
 )
+
 group_info <- read.table(
   header = TRUE,
   file = file.path(input_dir, "group_info.txt")
@@ -58,6 +61,7 @@ compare_enrich_result <- compareCluster(all_result, fun = "GSEA",
                                         pvalueCutoff = .05,
                                         TERM2GENE = plant_tf_db)
 
+if (FALSE) {
 enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
                        showCategory = 25) +
   aes(shape = I(15)) +
@@ -71,19 +75,35 @@ enrich_plot <- dotplot(compare_enrich_result, includeAll = TRUE,
         axis.text.y = element_text(size = 15),
         axis.title.y = element_blank()) +
   np_style(colours = c("#371ea3", "#46bac2", "#b3eebe"), legend_shape=0)
- 
+}
+
+
+
+enrich_plot <- dotplot(compare_enrich_result, showCategory = 25) + 
+  aes(shape=I(22)) +
+  coord_flip() +
+  theme_minimal() +
+  theme_noxaxis() + 
+  xlab(NULL) +
+  set_enrichplot_color(c("#371ea3", "#46bac2", "#b3eebe"), .fun=ggplot2::scale_fill_gradientn)
+
+
+
 # transcription factor function annotate
 go_db <- read.table(
   file = file.path(input_dir, "annot_data/Phe_GO_annotation.txt"),
   header = TRUE, sep = "\t", quote = ""
 )
 
-tf_id <- unique(enrich_plot$data$ID)
+# tf_id <- unique(enrich_plot$data$ID)
+tf_id <- unique(get_plot_data(enrich_plot, "ID")[,1])
+
 tf_genes <- split(plant_tf_db$GENE, plant_tf_db$TERM)[tf_id]
 y <- compareCluster(tf_genes, fun = "enricher",
                     TERM2GENE = go_db[, c(2, 1)],
                     TERM2NAME = go_db[, c(2, 3)])
 
+if (FALSE) {
 enrich_pathway_plot <- dotplot(y, by = "count", color = "qvalue",
                                showCategory = 3, label_format = 40) +
   theme_minimal(base_size = 14) +
@@ -91,7 +111,16 @@ enrich_pathway_plot <- dotplot(y, by = "count", color = "qvalue",
                                    angle = 30, size = 10),
         axis.text.y = element_text(size = 13, face = "bold")) +
   np_style()
+}
 
+enrich_pathway_plot <- dotplot(y, by = "count", color = "qvalue",
+          showCategory = 3, label_format = 40) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(vjust = 1, hjust = 1,
+                                   angle = 30, size = 10)) +
+  xlab(NULL) + ggtitle(NULL)
+
+enrich_pathway_plot
 #  guides(size = guide_legend(override.aes = list(shape = 1))) +
 #  xlab(NULL) + ggtitle(NULL) +
 #  scale_color_gradientn(colors = c("#e06663", "#327eba"),
@@ -110,6 +139,11 @@ tf_annot_plot <- ggplot(data = plot_data,
 
 fig <- insert_top(tf_annot_plot, enrich_plot, height = 5) |>
   insert_bottom(enrich_pathway_plot, height = 50)
+fig
+
+
+
+
 
 ggsave(fig, file = "Phyllostachys_heterocycla_example/result/fig.png",
        width = 15, height = 10)

@@ -38,9 +38,11 @@ pbmc <- FindVariableFeatures(pbmc, selection.method = "vst",
 )
 # Cluster the cells
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.5)
-pbmc <- RunUMAP(pbmc, dims = 1:10)
 
 # cell type annotate using default method
 seurat_cluster_id <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B",

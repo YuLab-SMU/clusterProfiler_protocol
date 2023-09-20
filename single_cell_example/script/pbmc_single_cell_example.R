@@ -27,14 +27,15 @@ pbmc <- subset(pbmc,
 pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize",
   scale.factor = 10000
 )
+
+# Scaling the data
+all.genes <- rownames(pbmc)
+pbmc <- ScaleData(pbmc, features = all.genes)
+
 # Identification of highly variable features
 pbmc <- FindVariableFeatures(pbmc, selection.method = "vst",
   nfeatures = 2000
 )
-# Scaling the data
-all.genes <- rownames(pbmc)
-pbmc <- ScaleData(pbmc, features = all.genes)
-pbmc <- RunMCA(pbmc)
 # Cluster the cells
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
@@ -50,6 +51,17 @@ seurat_pbmc <- RenameIdents(pbmc, seurat_cluster_id)
 seurat_pbmc_plot <- DimPlot(seurat_pbmc, label = TRUE, repel = TRUE) +
   theme(legend.position = "none")
 
+
+pbmc <- RunMCA(pbmc)
+# Find cell group markers
+marker_gene <- GetGroupGeneSet(X = pbmc, group.by = "seurat_clusters",
+  n.features = 20
+)
+
+cell_type_enrich_result <- compareCluster(marker_gene, fun = "enricher",
+  TERM2GENE = cell_marker_db
+)
+
 # cell type annotate using clusterProfiler
 predict_cell_type <- function(cell_type_enrich_result) {
   d <- as.data.frame(cell_type_enrich_result)
@@ -63,14 +75,6 @@ predict_cell_type <- function(cell_type_enrich_result) {
   return(ret)
 }
 
-# Find cell group markers
-marker_gene <- GetGroupGeneSet(X = pbmc, group.by = "seurat_clusters",
-  n.features = 20
-)
-
-cell_type_enrich_result <- compareCluster(marker_gene, fun = "enricher",
-  TERM2GENE = cell_marker_db
-)
 
 cell_type_predict <- predict_cell_type(cell_type_enrich_result)
 clusterprofiler_pbmc <- RenameIdents(pbmc, cell_type_predict)

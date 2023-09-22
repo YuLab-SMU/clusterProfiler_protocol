@@ -1,9 +1,8 @@
 #loading pkgs
 library(clusterProfiler)
 library(enrichplot)
-library(ggtreeExtra)
 library(ggplot2)
-
+# devtools::install_github("YuLab-SMU/enrichplot")
 #IBD-only-gene
 dir <- "IBD_2_subtypes_example/result"
 de_gene <- readRDS(file.path(dir,"IBD.gene.mpse.rds"))

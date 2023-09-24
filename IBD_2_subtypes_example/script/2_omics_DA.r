@@ -27,7 +27,7 @@ DA <- function(expr,
                 subset_group, 
                 diff_group, 
                 filter.p = 'pvalue', ...) {
-  sign.group_colname <- paste0('Sign_', group_colname)
+  sign_group_colname <- paste0('Sign_', group_colname)
   mpse <- MPSE(expr)
   mpse <- mpse |> left_join(meta, by = "Sample")
   mpse |>
@@ -41,7 +41,7 @@ DA <- function(expr,
       ...
     ) |>
     mp_extract_feature() |>
-    dplyr::filter(!!as.symbol(sign.group_colname) == diff_group) |>
+    dplyr::filter(!!as.symbol(sign_group_colname) == diff_group) |>
     dplyr::pull(OTU)
 }
 

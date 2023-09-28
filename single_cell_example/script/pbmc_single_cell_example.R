@@ -2,8 +2,9 @@ library(Seurat)
 library(CelliD)
 library(clusterProfiler)
 library(ggplot2)
-library(patchwork)
 library(ggrepel)
+library(ggsc)
+library(patchwork)
 
 input_dir <- "single_cell_example/input_data"
 # import cell marker database
@@ -16,7 +17,7 @@ pbmc_data <- Read10X(
 )
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc_data, project = "pbmc3k",
-  min.cells = 3, min.features = 200
+  min.cells = 3
 )
 # Preprocess
 pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
@@ -38,11 +39,16 @@ pbmc <- FindVariableFeatures(pbmc, selection.method = "vst",
 )
 # Cluster the cells
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
-
 pbmc <- RunUMAP(pbmc, dims = 1:10)
-
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.5)
+
+# Find cluster biomarkers
+pbmc <- RunMCA(pbmc)
+cluster_markers <- GetGroupGeneSet(X = pbmc,
+  group.by = "seurat_clusters",
+  n.features = 20
+)
 
 # cell type annotate using default method
 seurat_cluster_id <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B",
@@ -54,34 +60,31 @@ seurat_pbmc_plot <- DimPlot(seurat_pbmc, label = TRUE, repel = TRUE) +
   theme(legend.position = "none")
 
 
-pbmc <- RunMCA(pbmc)
-# Find cell group markers
-marker_gene <- GetGroupGeneSet(X = pbmc, group.by = "seurat_clusters",
-  n.features = 20
-)
 
-cell_type_enrich_result <- compareCluster(marker_gene, fun = "enricher",
+# predict cell type using clusterProfiler
+cell_type_enrich_result <- compareCluster(cluster_markers,
+  fun = "enricher",
   TERM2GENE = cell_marker_db
 )
 
 # cell type annotate using clusterProfiler
-predict_cell_type <- function(cell_type_enrich_result) {
-  d <- as.data.frame(cell_type_enrich_result)
-  res <- split(d, d$Cluster) |>
+predict_cell_type <- function(enrich_result) {
+  enrich_result <- as.data.frame(enrich_result)
+  result <- split(
+    enrich_result, enrich_result$Cluster
+  ) |>
     sapply(function(x) {
       x$ID[which.min(x$qvalue)]
     })
-  ret <- gsub("_", " ", res) |>
+  cell_type <- gsub("_", " ", result) |>
     yulab.utils::str_wrap(18)
-  names(ret) <- names(res)
-  return(ret)
+  names(cell_type) <- names(result)
+  return(cell_type)
 }
-
 
 cell_type_predict <- predict_cell_type(cell_type_enrich_result)
 clusterprofiler_pbmc <- RenameIdents(pbmc, cell_type_predict)
 
-library(ggsc)
 clusterprofiler_pbmc_plot <- sc_dim(clusterprofiler_pbmc) +
   sc_dim_geom_label(geom = geom_text_repel, color = "black",
                     bg.color = "white") +

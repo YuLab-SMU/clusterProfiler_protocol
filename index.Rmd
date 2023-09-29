@@ -18,7 +18,7 @@ library(knitr)
 ```
 # Data description
 
-## Inflammatory Bowel Dwasease example data description
+## Inflammatory Bowel Disease example data description
 
 NIHMS1510763-supplement-Dataset_1.xlsx: The Metabolomic Abundance Raw Matrix was downloaded from https://doi.org/10.1038/s41564-018-0306-4.
 

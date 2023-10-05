@@ -74,9 +74,9 @@ predict_cell_type <- function(enrich_result) {
   result <- split(
     enrich_result, enrich_result$Cluster
   ) |>
-    sapply(function(x) {
+    vapply(function(x) {
       x$ID[which.min(x$p.adjust)]
-    })
+    }, FUN.VALUE = "")
   cell_type <- gsub("_", " ", result) |>
     yulab.utils::str_wrap(18)
   names(cell_type) <- names(result)
@@ -130,3 +130,5 @@ ggsave(fig2, file = "single_cell_example/result/DimPlot2.pdf",
 ggsave(fig2, file = "single_cell_example/result/DimPlot2.png",
   width = 15.5, height = 7
 )
+
+

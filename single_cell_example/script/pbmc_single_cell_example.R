@@ -70,6 +70,7 @@ cell_type_enrich_result <- compareCluster(cluster_markers,
 # cell type annotate using clusterProfiler
 predict_cell_type <- function(enrich_result) {
   enrich_result <- as.data.frame(enrich_result)
+  enrich_result$Cluster <- as.character(enrich_result$Cluster) 
   result <- split(
     enrich_result, enrich_result$Cluster
   ) |>

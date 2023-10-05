@@ -74,7 +74,7 @@ predict_cell_type <- function(enrich_result) {
     enrich_result, enrich_result$Cluster
   ) |>
     sapply(function(x) {
-      x$ID[which.min(x$qvalue)]
+      x$ID[which.min(x$p.adjust)]
     })
   cell_type <- gsub("_", " ", result) |>
     yulab.utils::str_wrap(18)

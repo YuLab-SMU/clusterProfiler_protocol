@@ -19,54 +19,54 @@ metagenome <- read.csv(file.path(input_dir, "mg.expr.csv"),
 
 # difference analysis function
 DA <- function(expr, 
-               meta, 
-               abundance = 'Abundance', 
-               group.colname = 'Diagnosis', 
-               force = TRUE,
-               relative = FALSE,
-               subset.group, 
-               diff.group, 
-               filter.p = 'pvalue', ...) {
-  sign.group.colname <- paste0('Sign_', group.colname)
+                meta, 
+                abundance = 'Abundance', 
+                group_colname = 'Diagnosis', 
+                force = TRUE,
+                relative = FALSE,
+                subset_group, 
+                diff_group, 
+                filter.p = 'pvalue', ...) {
+  sign_group_colname <- paste0('Sign_', group_colname)
   mpse <- MPSE(expr)
   mpse <- mpse |> left_join(meta, by = "Sample")
   mpse |>
-    dplyr::filter(!!as.symbol(group.colname) %in% subset.group) |>
+    dplyr::filter(!!as.symbol(group_colname) %in% subset_group) |>
     mp_diff_analysis(
       .abundance = !!as.symbol(abundance),
-      .group = !!as.symbol(group.colname),
+      .group = !!as.symbol(group_colname),
       force = force,
       relative = relative,
       filter.p = filter.p,
       ...
     ) |>
     mp_extract_feature() |>
-    dplyr::filter(!!as.symbol(sign.group.colname) == diff.group) |>
+    dplyr::filter(!!as.symbol(sign_group_colname) == diff_group) |>
     dplyr::pull(OTU)
 }
 
 # Metagenomic differential analysis
 groups <- c(CD = "CD", UC = "UC")
-to.ora.gene <- lapply(groups, function(x){
-  DA(expr = metagenome,
-    meta = meta_mg,
-    subset.group = c(x, 'Control'), 
-    diff.group = x,
-  )
-})
+de_gene <- lapply(groups, function(x){
+    DA(expr = metagenome, 
+       meta = meta_mg, 
+       subset_group = c(x, 'Control'), 
+       diff_group = x,
+    )
+}) 
 
 # Save the drawing data needed
-saveRDS(to.ora.gene, file.path(output_dir, "IBD.gene.mpse.rds"))
+saveRDS(de_gene, file.path(output_dir, "IBD.gene.mpse.rds"))
 
 # Metabolomic differential analysis
 groups <- c(CD = "CD", UC = "UC")
-to.ora.cpd <- lapply(groups, function(x){
-  DA(expr = metabolism,
-    meta = meta_mb,
-    subset.group = c(x, "Control"),
-    diff.group = x,
-  )
+de_cpd <- lapply(groups, function(x){
+    DA(expr = metabolism,
+       meta = meta_mb,
+       subset_group = c(x, 'Control'),
+       diff_group = x,
+    )
 })
 
 # Save the drawing data needed
-saveRDS(to.ora.cpd, file.path(output_dir, "IBD.cpd.mpse.rds"))
+saveRDS(de_cpd, file.path(output_dir, "IBD.cpd.mpse.rds"))

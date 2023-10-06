@@ -70,13 +70,12 @@ cell_type_enrich_result <- compareCluster(cluster_markers,
 # cell type annotate using clusterProfiler
 predict_cell_type <- function(enrich_result) {
   enrich_result <- as.data.frame(enrich_result)
-  enrich_result$Cluster <- as.character(enrich_result$Cluster) 
   result <- split(
     enrich_result, enrich_result$Cluster
   ) |>
     vapply(function(x) {
       x$ID[which.min(x$p.adjust)]
-    }, FUN.VALUE = "")
+    }, FUN.VALUE = character(1))
   cell_type <- gsub("_", " ", result) |>
     yulab.utils::str_wrap(18)
   names(cell_type) <- names(result)

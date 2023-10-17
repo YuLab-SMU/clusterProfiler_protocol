@@ -101,15 +101,15 @@ tabfig <- tableGrob(
   )
 )
 
-fig2 <- (seurat_pbmc_plot | clusterprofiler_pbmc_plot) / tabfig +
+fig <- (seurat_pbmc_plot | clusterprofiler_pbmc_plot) / tabfig +
   plot_layout(heights = c(1, .2)) + plot_annotation(tag_levels = "A")
 
 
-fig2
+fig
 
-ggsave(fig2, file = "single_cell_example/result/DimPlot2.pdf",
+ggsave(fig, file = "single_cell_example/result/DimPlot.pdf",
   width = 15.5, height = 7
 )
-ggsave(fig2, file = "single_cell_example/result/DimPlot2.png",
+ggsave(fig, file = "single_cell_example/result/DimPlot.png",
   width = 15.5, height = 7
 )

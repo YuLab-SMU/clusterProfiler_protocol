@@ -14,25 +14,22 @@ pbmc_counts <- Read10X(
   data.dir = file.path(input_dir, "filtered_gene_bc_matrices/hg19/")
 )
 pbmc <- CreateSeuratObject(counts = pbmc_counts, project = "pbmc3k",
-                           min.cells = 3
-)
+                           min.cells = 3)
 toc()
 
 tic("Data preprocessing workflow")
 pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
 pbmc <- subset(pbmc,
-               subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5
+  subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5
 )
 pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize",
-                      scale.factor = 10000
-)
+                      scale.factor = 10000)
 pbmc <- ScaleData(pbmc)
 toc()
 
 tic("Dimensionality reduction")
 pbmc <- FindVariableFeatures(pbmc, selection.method = "vst",
-                             nfeatures = 2000
-)
+                             nfeatures = 2000)
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
 pbmc <- RunUMAP(pbmc, dims = 1:10)
 toc()
@@ -43,8 +40,7 @@ pbmc <- FindClusters(pbmc, resolution = 0.5)
 pbmc <- RunMCA(pbmc)
 cluster_markers <- GetGroupGeneSet(X = pbmc,
                                    group.by = "seurat_clusters",
-                                   n.features = 20
-)
+                                   n.features = 20)
 toc()
 
 tic("cell type annotation")
@@ -53,8 +49,7 @@ cell_marker_db <- read.gmt(
 )
 cell_type_enrich_result <- compareCluster(cluster_markers,
                                           fun = "enricher",
-                                          TERM2GENE = cell_marker_db
-)
+                                          TERM2GENE = cell_marker_db)
 
 predict_cell_type <- function(enrich_result) {
   enrich_result <- as.data.frame(enrich_result)
@@ -85,20 +80,13 @@ toc()
 library(aplot)
 # cell type annotate using default method
 seurat_cluster_id <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B",
-                       "CD8 T", "FCGR3A+ Mono", "NK", "DC", "Platelet"
-)
+                       "CD8 T", "FCGR3A+ Mono", "NK", "DC", "Platelet")
 names(seurat_cluster_id) <- levels(pbmc)
 seurat_pbmc <- RenameIdents(pbmc, seurat_cluster_id)
-seurat_pbmc_plot <- DimPlot(seurat_pbmc, label = TRUE, repel = TRUE) +
+seurat_pbmc_plot <- sc_dim(seurat_pbmc) +
+  sc_dim_geom_label(geom = ggrepel::geom_text_repel, color = "black",
+                    bg.color = "white") +
   theme(legend.position = "none")
-fig <- seurat_pbmc_plot | clusterprofiler_pbmc_plot +
-  plot_annotation(tag_levels = "A")
-ggsave(fig, file = "single_cell_example/result/DimPlot.pdf",
-  width = 12, height = 7
-)
-ggsave(fig, file = "single_cell_example/result/DimPlot.png",
-  width = 12, height = 7
-)
 
 d <- rbind(seurat_cluster_id, cell_type_predict)
 rownames(d) <- c("Known cell type", "Predicted cell type")
@@ -107,16 +95,15 @@ rownames(d) <- c("Known cell type", "Predicted cell type")
 library(gridExtra)
 dd <- layer_data(clusterprofiler_pbmc_plot)
 dd <- unique(dd[, c("colour", "group")])
-tabfig <- tableGrob(d, theme=ttheme_default(base_size=10, colhead=list(bg_params = list(fill=dd$colour[order(dd$group)]))))
-
-#grid::grid.draw(tabfig)
+tabfig <- tableGrob(
+  d, theme = ttheme_default(base_size=10,
+    colhead = list(bg_params = list(fill = dd$colour[order(dd$group)]))
+  )
+)
 
 fig2 <- (seurat_pbmc_plot | clusterprofiler_pbmc_plot) / tabfig +
   plot_layout(heights = c(1, .2)) + plot_annotation(tag_levels = "A")
 
-
-#fig2 <- aplot::plot_list(seurat_pbmc_plot, clusterprofiler_pbmc_plot, ggplotify::as.ggplot(tabfig), 
-#  design="AABB\nCCCC", tag_levels = 'A', heights=c(1, .2))
 
 fig2
 
@@ -126,5 +113,3 @@ ggsave(fig2, file = "single_cell_example/result/DimPlot2.pdf",
 ggsave(fig2, file = "single_cell_example/result/DimPlot2.png",
   width = 15.5, height = 7
 )
-
-

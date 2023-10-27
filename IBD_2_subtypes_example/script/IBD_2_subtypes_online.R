@@ -59,7 +59,7 @@ gene_enrich_result <- compareCluster(geneClusters = de_gene,
 p1 <- dotplot(gene_enrich_result, facet = 'intersect', showCategory = 10,
         split = "intersect", label_format = 60) +
   ggtitle("Functional enrichment of intestinal genes") +
-  theme(plot.title = element_text(hjust = 1))
+  theme(plot.title = element_text(hjust = 1)) 
 ggsave(p1,
        filename = file.path(dir, "IBD_2_subtypes_gene_ORA.pdf"),
        width = 9,
@@ -89,7 +89,7 @@ cpd_enrich_result <- compareCluster(geneClusters = de_cpd,
 p2 <- dotplot(cpd_enrich_result, facet = 'intersect', showCategory = 10,
         split = "intersect", label_format = 60) +
   ggtitle("Functional enrichment of chemical compounds") +
-  theme(plot.title = element_text(hjust = 1))
+  theme(plot.title = element_text(hjust = 1))  
 ggsave(p2,
        filename = file.path(dir,"IBD_2_subtypes_in_metabolism_ORA.pdf"),
        width = 9,
@@ -100,10 +100,10 @@ toc()
 fig  <-  aplot::plot_list(p1, p2, tag_levels = "A", tag_size = 15,
                           widths = c(1, .8))
 ggsave(fig,
-       file = file.path(dir, "fig.pdf"),
+       file = file.path(dir, "figure2.pdf"),
        width = 13,
        height = 6.5)
 ggsave(fig,
-       file = file.path(dir, "fig.png"),
+       file = file.path(dir, "figure2.png"),
        width = 13,
        height = 6.5)

@@ -54,7 +54,8 @@ perturbed_TF_plot <- dotplot(perturbed_TF_result,
   theme_noxaxis() +
   xlab(NULL) +
   set_enrichplot_color(
-    c("#371ea3", "#46bac2", "#b3eebe"),
+    #c("#371ea3", "#46bac2", "#b3eebe"),
+    c("#6C8FAD", "#84ADA7", "#C7B398"),
     .fun = ggplot2::scale_fill_gradientn
   )
 toc()
@@ -91,10 +92,13 @@ family_data <- subset(tf_family, Gene_ID %in% tf_id)
 family_data <- family_data[order(family_data$Family), ]
 family_data$Gene_ID <- factor(family_data$Gene_ID,
                               levels = family_data$Gene_ID)
+cols <- 
 tf_family_plot <- ggplot(data = family_data,
-                         aes(x = Gene_ID, y = 1, fill = Family)) +
+                        aes(x = Gene_ID, y = 1, fill = Family)) +
   geom_tile() +
-  ggsci::scale_fill_simpsons(alpha = .6) +
+  scale_fill_discrete(type=c('#B3D3AA', '#4B6B5C', '#E88A71', 
+                '#DEAB76', '#CD574D', '#85C1BF', '#BF38AE', 
+                '#176D84', '#7D83B7', '#4040C6', '#994B41')) +
   ggfun::theme_nothing()
 toc()
 
@@ -104,7 +108,7 @@ fig <- insert_top(tf_family_plot, perturbed_TF_plot, height = 5) |>
 fig
 toc()
 toc()
-ggsave(fig, file = "Phyllostachys_heterocycla_example/result/fig.png",
+ggsave(fig, file = "Phyllostachys_heterocycla_example/result/figure3.png",
        width = 15, height = 10)
-ggsave(fig, file = "Phyllostachys_heterocycla_example/result/fig.pdf",
+ggsave(fig, file = "Phyllostachys_heterocycla_example/result/figure3.pdf",
        width = 15, height = 10, dpi = "print")

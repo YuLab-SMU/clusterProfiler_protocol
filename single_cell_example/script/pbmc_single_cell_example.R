@@ -66,12 +66,16 @@ predict_cell_type <- function(enrich_result) {
 }
 cell_type_predict <- predict_cell_type(cell_type_enrich_result)
 clusterprofiler_pbmc <- RenameIdents(pbmc, cell_type_predict)
+
+cols <- c('#B3D3AA', '#E88A71', '#DEAB76', '#CD574D',  
+        '#BF38AE', '#176D84', '#7D83B7', '#4040C6', '#994B41')
 clusterprofiler_pbmc_plot <- sc_dim(clusterprofiler_pbmc) +
-  sc_dim_geom_label(geom = ggrepel::geom_text_repel, color = "black",
-                    bg.color = "white") +
+  sc_dim_geom_label(geom = ggrepel::geom_text_repel, 
+                    color = "black", bg.color = "white") +
+  scale_color_discrete(type=cols) +
   theme(legend.position = "none")
 ggsave(clusterprofiler_pbmc_plot,
-       file = "single_cell_example/result/figure4.pdf",
+       file = "single_cell_example/result/figure4-cp.pdf",
        width = 12, height = 7)
 toc()
 toc()
@@ -86,6 +90,7 @@ seurat_pbmc <- RenameIdents(pbmc, seurat_cluster_id)
 seurat_pbmc_plot <- sc_dim(seurat_pbmc) +
   sc_dim_geom_label(geom = ggrepel::geom_text_repel, color = "black",
                     bg.color = "white") +
+  scale_color_discrete(type=cols) +
   theme(legend.position = "none")
 
 d <- rbind(seurat_cluster_id, cell_type_predict)
@@ -107,9 +112,9 @@ fig <- (seurat_pbmc_plot | clusterprofiler_pbmc_plot) / tabfig +
 
 fig
 
-ggsave(fig, file = "single_cell_example/result/DimPlot.pdf",
+ggsave(fig, file = "single_cell_example/result/figure4.pdf",
   width = 15.5, height = 7
 )
-ggsave(fig, file = "single_cell_example/result/DimPlot.png",
+ggsave(fig, file = "single_cell_example/result/figure4.png",
   width = 15.5, height = 7
 )

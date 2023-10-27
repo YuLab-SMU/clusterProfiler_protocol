@@ -54,7 +54,6 @@ perturbed_TF_plot <- dotplot(perturbed_TF_result,
   theme_noxaxis() +
   xlab(NULL) +
   set_enrichplot_color(
-    #c("#371ea3", "#46bac2", "#b3eebe"),
     c("#6C8FAD", "#84ADA7", "#C7B398"),
     .fun = ggplot2::scale_fill_gradientn
   )

@@ -37,7 +37,7 @@ toc()
 tic("Cluster cells and identify markers of cell clusters")
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.5)
-pbmc <- RunMCA(pbmc)
+pbmc <- RunMCA(pbmc, slot = "RNA")
 cluster_markers <- GetGroupGeneSet(X = pbmc,
                                    group.by = "seurat_clusters",
                                    n.features = 20)

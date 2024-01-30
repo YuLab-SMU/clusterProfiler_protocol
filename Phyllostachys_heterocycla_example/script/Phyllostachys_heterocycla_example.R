@@ -104,10 +104,9 @@ toc()
 tic("All in one integration to reveal transcription factor perturbation and subsequent biological effects")
 fig <- insert_top(tf_family_plot, perturbed_TF_plot, height = 5) |>
   insert_bottom(TF_GO_plot, height = 50)
-fig
-toc()
-toc()
 ggsave(fig, file = "Phyllostachys_heterocycla_example/result/figure3.png",
        width = 15, height = 10)
 ggsave(fig, file = "Phyllostachys_heterocycla_example/result/figure3.pdf",
        width = 15, height = 10, dpi = "print")
+toc()
+toc()

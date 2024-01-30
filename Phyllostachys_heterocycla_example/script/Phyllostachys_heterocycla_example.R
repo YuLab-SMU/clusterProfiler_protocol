@@ -72,7 +72,6 @@ TF_GO_result <- compareCluster(tf_genes, fun = "enricher",
                                TERM2NAME = go_db[, c(2, 3)])
 
 TF_GO_plot <- dotplot(TF_GO_result, by = "count",
-                      color = "qvalue",
                       showCategory = 3, label_format = 40) +
   theme_minimal() +
   theme(axis.text.x = element_text(vjust = 1, hjust = 1,

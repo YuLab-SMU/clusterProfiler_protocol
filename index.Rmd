@@ -60,7 +60,7 @@ barcodes.tsv, genes.tsv, matrix.mtx: The single-cell transcriptomic data used in
 ```{r echo=FALSE}
 library(fs)
 x <- dir_info('examples', recurse = TRUE)[, 1:3] |>
-    as.data.frame()
+    as.data.frame() |> subset(type == "file")
 
 x$path <- sprintf("[%s](%s)", x$path, x$path)
 

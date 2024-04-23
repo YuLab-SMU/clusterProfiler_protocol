@@ -2,7 +2,7 @@ name: test-dummy
 on: [push]
 
 jobs:
-  pages-directory-listing-release:
+  clusterProfiler_protocol:
     runs-on: ubuntu-latest
     name: Actions Template
     steps:

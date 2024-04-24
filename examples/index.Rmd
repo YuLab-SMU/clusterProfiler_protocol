@@ -1,0 +1,37 @@
+---
+title: "clusterProfiler: The 'Paintbrush' for Portraying Multi-Omics Data"
+subtitle: "online example data"
+author: "Maintained by YuLab-SMU"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+---
+
+
+
+```{r echo=FALSE, results="hide", message=FALSE, warning=FALSE}
+library(fs)
+library(knitr)
+```
+
+# Data description
+
+IBD_2_subtypes: The directory to store the inflammatory Bowel Disease example data.
+
+Phyllostachys_heterocycla: The directory to store the Phyllostachys Edulis example data. 
+
+single_cell: The directory to store the single cell example data.
+
+# Data link
+```{r echo=FALSE}
+library(fs)
+x <- dir_info('./', recurse = FALSE)[, 1:3] |>
+    as.data.frame() |> subset(type == "directory")
+
+x$path <- sprintf("[%s](%s)", x$path, x$path)
+
+knitr::kable(x, row.names = FALSE)
+```

@@ -1,0 +1,43 @@
+---
+title: "clusterProfiler: The 'Paintbrush' for Portraying Multi-Omics Data"
+subtitle: "online example data"
+author: "Maintained by YuLab-SMU"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+---
+
+
+
+```{r echo=FALSE, results="hide", message=FALSE, warning=FALSE}
+library(fs)
+library(knitr)
+```
+# Data description
+
+## Phyllostachys Edulis example data description:
+
+Phe_GO_annotation.txt: The Phyllostachys Edulis gene GO annotation data was downloaded from http://planttfdb.gao-lab.org/.
+
+Phe_TF_lwast.txt: The Phyllostachys Edulis transcription factor family annotation data was downloaded from http://planttfdb.gao-lab.org/.
+
+regulation_from_motif_CE_Phe.txt: The Predicted Phyllostachys Edulis transcription factor target gene was downloaded from http://planttfdb.gao-lab.org/.
+
+counts.txt: The counts.txt was processed Phyllostachys Edulis gene count matrix derived from https://db.cngb.org/search/project/CNP0002243/.
+
+group_info.txt: The Phyllostachys Edulis sample group infomation was derived from https://onlinelibrary.wiley.com/doi/10.1111/jipb.13357.
+
+# Data link
+```{r echo=FALSE}
+library(fs)
+x <- dir_info('./', recurse = TRUE)[, 1:3] |>
+    as.data.frame() |> subset(type == "file") |>
+    subset(!path %in% c("index.Rmd", "index.html", "render.sh"))
+
+x$path <- sprintf("[%s](%s)", x$path, x$path)
+
+knitr::kable(x, row.names = FALSE)
+```

@@ -1,0 +1,36 @@
+---
+title: "clusterProfiler: The 'Paintbrush' for Portraying Multi-Omics Data"
+subtitle: "online example data"
+author: "Maintained by YuLab-SMU"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+---
+# Directory introduction
+
+This directory contains some of the files used in the Phyllostachys heterocycla example.
+
+Phe_GO_annotation.txt: The Phyllostachys Edulis gene GO annotation data was downloaded from http://planttfdb.gao-lab.org/.
+
+Phe_TF_lwast.txt: The Phyllostachys Edulis transcription factor family annotation data was downloaded from http://planttfdb.gao-lab.org/.
+
+regulation_from_motif_CE_Phe.txt: The Predicted Phyllostachys Edulis transcription factor target gene was downloaded from http://planttfdb.gao-lab.org/.
+
+# Data link
+```{r echo=FALSE}
+library(fs)
+x <- dir_info('examples/Phyllostachys_heterocycla/annot_data',
+    recurse = TRUE, invert = TRUE, regexp = "[.]html$")[, 1:3] |>
+    as.data.frame()
+
+x_link <- gsub(x$path,
+  pattern = "examples/Phyllostachys_heterocycla/annot_data/",
+  replacement = ""
+)
+x$path <- sprintf("[%s](%s)", x_link, x_link)
+
+knitr::kable(x, row.names = FALSE)
+```

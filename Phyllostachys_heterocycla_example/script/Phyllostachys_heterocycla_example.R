@@ -13,6 +13,10 @@ library(enrichplot)
 counts <- read.delim(file = file.path(input_dir, "counts.txt"))
 
 group_info <- read.delim(file = file.path(input_dir, "group_info.txt"))
+
+group_info$group <- factor(group_info$group,
+  levels = c("0h", "2h", "24h", "168h")
+)
 toc()
 
 tic("calculate logarithmic fold changes(log2FC) using DESeq2")

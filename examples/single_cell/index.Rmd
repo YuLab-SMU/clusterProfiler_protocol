@@ -1,0 +1,38 @@
+---
+title: "Using clusterProfiler to characterize Multi-Omics Data"
+subtitle: "online example data"
+author: "Maintained by YuLab-SMU"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+---
+
+
+
+```{r echo=FALSE, results="hide", message=FALSE, warning=FALSE}
+library(fs)
+library(knitr)
+```
+# Data description
+
+## PBMC single cell example data description:
+
+c8.all.v2023.1.Hs.symbols.gmt: The C8 gene set was downloaded from https://www.gsea-msigdb.org/gsea/msigdb.
+
+barcodes.tsv, genes.tsv, matrix.mtx: The single-cell transcriptomic data used in this study was derived from PBMC (Peripheral Blood Mononuclear Cell) samples and can be obtained from the following source: https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz.
+
+# Data link
+```{r echo=FALSE}
+library(fs)
+x <- dir_info('./', recurse = TRUE)[, 1:3] |>
+    as.data.frame() |> subset(type == "file") |>
+    subset(!path %in% c("index.Rmd", "index.html", "render.sh"))
+
+
+x$path <- sprintf("[%s](%s)", x$path, x$path)
+
+knitr::kable(x, row.names = FALSE)
+```

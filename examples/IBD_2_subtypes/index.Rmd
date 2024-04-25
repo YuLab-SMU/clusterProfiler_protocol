@@ -38,29 +38,13 @@ mg.meta.csv:  The processed metabolomic experimental grouping information file w
 
 name_map.csv: The ID mapping file(mapping metabolites to KEGG C-Numbers) was downloaded from https://www.metaboanalyst.ca/MetaboAnalyst/resources/users/guest7299843510837833804tmp/name_map.csv.
 
-## Phyllostachys Edulis example data description:
-
-Phe_GO_annotation.txt: The Phyllostachys Edulis gene GO annotation data was downloaded from http://planttfdb.gao-lab.org/.
-
-Phe_TF_lwast.txt: The Phyllostachys Edulis transcription factor family annotation data was downloaded from http://planttfdb.gao-lab.org/.
-
-regulation_from_motif_CE_Phe.txt: The Predicted Phyllostachys Edulis transcription factor target gene was downloaded from http://planttfdb.gao-lab.org/.
-
-counts.txt: The counts.txt was processed Phyllostachys Edulis gene count matrix derived from https://db.cngb.org/search/project/CNP0002243/.
-
-group_info.txt: The Phyllostachys Edulis sample group infomation was derived from https://onlinelibrary.wiley.com/doi/10.1111/jipb.13357.
-
-## PBMC single cell example data description:
-
-c8.all.v2023.1.Hs.symbols.gmt: The C8 gene set was downloaded from https://www.gsea-msigdb.org/gsea/msigdb.
-
-barcodes.tsv, genes.tsv, matrix.mtx: The single-cell transcriptomic data used in this study was derived from PBMC (Peripheral Blood Mononuclear Cell) samples and can be obtained from the following source: https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz.
 
 # Data link
 ```{r echo=FALSE}
 library(fs)
-x <- dir_info('examples', recurse = TRUE)[, 1:3] |>
-    as.data.frame() |> subset(type == "file")
+x <- dir_info('./', recurse = TRUE)[, 1:3] |>
+    as.data.frame() |> subset(type == "file") |>
+    subset(!path %in% c("index.Rmd", "index.html", "render.sh"))
 
 x$path <- sprintf("[%s](%s)", x$path, x$path)
 

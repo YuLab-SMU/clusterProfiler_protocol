@@ -20,11 +20,11 @@ library(knitr)
 
 ## Phyllostachys Edulis example data description:
 
-Phe_GO_annotation.txt: The Phyllostachys Edulis gene GO annotation data was downloaded from http://planttfdb.gao-lab.org/.
+Phe_GO_annotation.txt: The Phyllostachys Edulis gene GO annotation data was downloaded from https://plantregmap.gao-lab.org/download_ftp.php?filepath=08-download/Phyllostachys_heterocycla/GO/Phe_GO_annotation.gz.
 
-Phe_TF_lwast.txt: The Phyllostachys Edulis transcription factor family annotation data was downloaded from http://planttfdb.gao-lab.org/.
+Phe_TF_list.txt: The Phyllostachys Edulis transcription factor family annotation data was downloaded from https://planttfdb.gao-lab.org/download/TF_list/Phe_TF_list.txt.gz.
 
-regulation_from_motif_CE_Phe.txt: The Predicted Phyllostachys Edulis transcription factor target gene was downloaded from http://planttfdb.gao-lab.org/.
+regulation_from_motif_CE_Phe.txt: The Predicted Phyllostachys Edulis transcription factor target gene was downloaded from https://plantregmap.gao-lab.org/download_ftp.php?filepath=08-download/Phyllostachys_heterocycla/binding/regulation_from_motif_CE_Phe.txt.
 
 counts.txt: The counts.txt was processed Phyllostachys Edulis gene count matrix derived from https://db.cngb.org/search/project/CNP0002243/.
 

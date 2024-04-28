@@ -1,0 +1,54 @@
+---
+output:
+  md_document:
+    variant: gfm
+html_preview: false
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# Using clusterProfiler to characterize Multi-Omics Data
+
+If you use this work in published research, please cite:
+
+Using clusterProfiler to characterize Multi-Omics Data
+
+This repo contains source code and data to produce Figures of the above paper.
+  
+  The `IBD_2_subtypes_example`, `Phyllostachys_heterocyla_example` and `single_cell_example` contain the 
+  data, scripts and results of the three examples in the above article. Each sub directory contains 
+  `input_data`, `result`, `script`.
+
+  + input_data: contains all the data sets that used to generate the figures.
+  + result: contains the results.
+  + script: contains the source code to produce the figures.
+
+More details information can be found from [here](https://yulab-smu.top/clusterProfiler_protocol/).
+
+## Dependencies and locations
+  
+```{r, message=FALSE, echo=FALSE, warning = FALSE, setup}
+library(tictoc)
+library(MicrobiotaProcess)
+library(clusterProfiler)
+library(ggplot2)
+library(enrichplot)
+library(dplyr)
+library(aplot)
+library(DESeq2)
+library(ggfun)
+library(Seurat)
+library(CelliD)
+library(ggrepel)
+library(ggsc)
+library(patchwork)
+library(gridExtra)
+```
+
+
+Here is the output of `sessionInfo()` of the system was compiled:
+
+```{r, echo=FALSE}
+sessionInfo()
+```
+

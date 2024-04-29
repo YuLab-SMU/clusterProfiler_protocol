@@ -7,11 +7,11 @@ html_preview: false
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Using clusterProfiler to characterize Multi-Omics Data
+# Using clusterProfiler to characterise Multi-Omics Data
 
 If you use this work in published research, please cite:
 
-Using clusterProfiler to characterize Multi-Omics Data
+Using clusterProfiler to characterise Multi-Omics Data
 
 This repo contains source code and data to produce Figures of the above paper.
   

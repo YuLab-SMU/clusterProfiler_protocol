@@ -39,7 +39,8 @@ DA <- function(expr,
     ) |>
     mp_extract_feature() |>
     dplyr::filter(!!as.symbol(sign_group_colname) == diff_group) |>
-    dplyr::pull(OTU)
+    dplyr::pull(OTU) |> 
+    suppressMessages()
 }
 
 groups <- c(CD = 'CD', UC = 'UC')

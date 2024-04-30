@@ -94,7 +94,7 @@ family_data <- subset(tf_family, Gene_ID %in% tf_id)
 family_data <- family_data[order(family_data$Family), ]
 family_data$Gene_ID <- factor(family_data$Gene_ID,
                               levels = family_data$Gene_ID)
-cols <- 
+
 tf_family_plot <- ggplot(data = family_data,
                         aes(x = Gene_ID, y = 1, fill = Family)) +
   geom_tile() +

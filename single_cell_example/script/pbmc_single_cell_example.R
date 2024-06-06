@@ -69,7 +69,7 @@ clusterprofiler_pbmc <- RenameIdents(pbmc, cell_type_predict)
 
 cols <- c('#B3D3AA', '#E88A71', '#DEAB76', '#CD574D',  
         '#BF38AE', '#176D84', '#7D83B7', '#4040C6', '#994B41')
-clusterprofiler_pbmc_plot <- sc_dim(clusterprofiler_pbmc) +
+clusterprofiler_pbmc_plot <- sc_dim(clusterprofiler_pbmc, geom = geom_point, size=.5) +
   sc_dim_geom_label(geom = ggrepel::geom_text_repel, 
                     color = "black", bg.color = "white") +
   scale_color_discrete(type=cols) +
@@ -87,7 +87,7 @@ seurat_cluster_id <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B",
                        "CD8 T", "FCGR3A+ Mono", "NK", "DC", "Platelet")
 names(seurat_cluster_id) <- levels(pbmc)
 seurat_pbmc <- RenameIdents(pbmc, seurat_cluster_id)
-seurat_pbmc_plot <- sc_dim(seurat_pbmc) +
+seurat_pbmc_plot <- sc_dim(seurat_pbmc, geom = geom_point, size =.5) +
   sc_dim_geom_label(geom = ggrepel::geom_text_repel, color = "black",
                     bg.color = "white") +
   scale_color_discrete(type=cols) +
